@@ -1,0 +1,294 @@
+[
+  {
+    "component_type": "waf",
+    "icon": "🛡️",
+    "category": "security",
+    "description": "Web application firewall protecting web apps",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "waf_provider": ["ModSecurity", "AWS WAF", "Cloudflare", "Imperva", "F5"],
+        "deployment_mode": ["Inline", "Out-of-Band", "Cloud"]
+      },
+      "protection": {
+        "owasp_top_10": "Boolean",
+        "sql_injection": "Boolean",
+        "xss_protection": "Boolean",
+        "csrf_protection": "Boolean",
+        "file_inclusion": "Boolean",
+        "command_injection": "Boolean",
+        "ddos_protection": "Boolean",
+        "bot_detection": "Boolean",
+        "api_protection": "Boolean"
+      },
+      "configuration": {
+        "rule_sets": ["OWASP CRS", "Custom", "Vendor-Specific"],
+        "blocking_mode": ["Block", "Monitor", "Challenge"],
+        "rate_limiting": "Boolean",
+        "geo_blocking": "Boolean",
+        "ip_reputation": "Boolean",
+        "custom_rules": "Array",
+        "whitelist": "Array",
+        "blacklist": "Array"
+      },
+      "logging": {
+        "log_blocked_requests": "Boolean",
+        "log_allowed_requests": "Boolean",
+        "log_destination": ["Local", "SIEM", "Cloud"],
+        "alert_on_threshold": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "siem",
+    "icon": "🔍",
+    "category": "security",
+    "description": "Centralized security monitoring and analysis",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "siem_platform": ["Splunk", "ELK Stack", "QRadar", "ArcSight", "Azure Sentinel", "Sumo Logic"],
+        "ip_address": "String"
+      },
+      "data_sources": {
+        "firewall_logs": "Boolean",
+        "server_logs": "Boolean",
+        "application_logs": "Boolean",
+        "network_traffic": "Boolean",
+        "authentication_logs": "Boolean",
+        "cloud_logs": "Boolean",
+        "endpoint_logs": "Boolean"
+      },
+      "features": {
+        "real_time_correlation": "Boolean",
+        "threat_intelligence": "Boolean",
+        "behavioral_analytics": "Boolean",
+        "machine_learning": "Boolean",
+        "automated_response": "Boolean",
+        "forensics": "Boolean",
+        "compliance_reporting": "Boolean"
+      },
+      "configuration": {
+        "log_retention_days": "Integer",
+        "storage_capacity_tb": "Integer",
+        "alert_rules": "Integer",
+        "custom_dashboards": "Integer"
+      },
+      "integration": {
+        "ticketing_system": "Boolean",
+        "soar_platform": "Boolean",
+        "threat_feeds": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "iam_sso",
+    "icon": "🔑",
+    "category": "security",
+    "description": "Identity and access management system",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "iam_platform": ["Active Directory", "Okta", "Auth0", "Azure AD", "AWS IAM", "Keycloak"],
+        "ip_address": "String"
+      },
+      "authentication": {
+        "sso_enabled": "Boolean",
+        "mfa_required": "Boolean",
+        "mfa_methods": ["TOTP", "SMS", "Push Notification", "Biometric", "Hardware Token"],
+        "password_policy": {
+          "min_length": "Integer",
+          "complexity_required": "Boolean",
+          "expiration_days": "Integer",
+          "history_count": "Integer"
+        },
+        "biometric_auth": "Boolean",
+        "certificate_based_auth": "Boolean"
+      },
+      "authorization": {
+        "rbac_enabled": "Boolean",
+        "abac_enabled": "Boolean",
+        "least_privilege": "Boolean",
+        "just_in_time_access": "Boolean",
+        "privileged_access_management": "Boolean"
+      },
+      "federation": {
+        "saml_enabled": "Boolean",
+        "oauth2_enabled": "Boolean",
+        "ldap_integration": "Boolean"
+      },
+      "monitoring": {
+        "login_monitoring": "Boolean",
+        "failed_login_alerts": "Boolean",
+        "privilege_escalation_detection": "Boolean",
+        "session_management": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "secrets_vault",
+    "icon": "🔒",
+    "category": "security",
+    "description": "Secure storage for credentials and secrets",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "vault_platform": ["HashiCorp Vault", "AWS Secrets Manager", "Azure Key Vault", "CyberArk"],
+        "ip_address": "String"
+      },
+      "security": {
+        "encryption_at_rest": "Boolean",
+        "encryption_algorithm": ["AES-256-GCM", "AES-128"],
+        "access_control": "Boolean",
+        "audit_logging": "Boolean",
+        "mfa_for_access": "Boolean",
+        "auto_rotation": "Boolean"
+      },
+      "features": {
+        "dynamic_secrets": "Boolean",
+        "secret_rotation": "Boolean",
+        "rotation_interval_days": "Integer",
+        "secret_versioning": "Boolean",
+        "lease_management": "Boolean",
+        "revocation": "Boolean"
+      },
+      "integration": {
+        "api_access": "Boolean",
+        "cli_access": "Boolean",
+        "cicd_integration": "Boolean",
+        "database_credential_management": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "honeypot",
+    "icon": "🍯",
+    "category": "security",
+    "description": "Decoy system to trap attackers",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "honeypot_type": ["Low-Interaction", "High-Interaction", "Hybrid"],
+        "services_emulated": ["SSH", "FTP", "HTTP", "Database", "SMB"],
+        "ip_address": "String"
+      },
+      "configuration": {
+        "vulnerability_level": ["High", "Medium", "Low"],
+        "fake_data_included": "Boolean",
+        "realistic_behavior": "Boolean",
+        "logging_level": ["Verbose", "Standard", "Minimal"]
+      },
+      "monitoring": {
+        "alert_on_access": "Boolean",
+        "attacker_profiling": "Boolean",
+        "threat_intelligence_contribution": "Boolean",
+        "forensic_capture": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "pki_ca",
+    "icon": "📜",
+    "category": "security",
+    "description": "Public Key Infrastructure / Certificate Authority",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "ca_type": ["Root CA", "Intermediate CA", "Issuing CA"],
+        "ca_software": ["OpenSSL", "Microsoft CA", "HashiCorp Vault PKI"],
+        "ip_address": "String"
+      },
+      "security": {
+        "hsm_backed": "Boolean",
+        "offline_root_ca": "Boolean",
+        "certificate_pinning": "Boolean",
+        "crl_enabled": "Boolean",
+        "ocsp_enabled": "Boolean"
+      },
+      "configuration": {
+        "key_size": ["2048-bit", "4096-bit", "ECC-256", "ECC-384"],
+        "certificate_validity_days": "Integer",
+        "auto_renewal": "Boolean",
+        "certificate_transparency": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "dlp",
+    "icon": "🚫",
+    "category": "security",
+    "description": "Data loss prevention system",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "dlp_platform": ["Symantec DLP", "McAfee DLP", "Microsoft DLP", "Forcepoint"],
+        "deployment": ["Network DLP", "Endpoint DLP", "Cloud DLP", "All"]
+      },
+      "protection": {
+        "email_monitoring": "Boolean",
+        "web_upload_blocking": "Boolean",
+        "usb_control": "Boolean",
+        "clipboard_monitoring": "Boolean",
+        "print_control": "Boolean",
+        "screen_capture_blocking": "Boolean"
+      },
+      "detection": {
+        "content_inspection": "Boolean",
+        "pattern_matching": "Boolean",
+        "machine_learning": "Boolean",
+        "fingerprinting": "Boolean",
+        "keyword_detection": "Boolean"
+      },
+      "data_types_monitored": {
+        "pii": "Boolean",
+        "phi": "Boolean",
+        "pci": "Boolean",
+        "source_code": "Boolean",
+        "intellectual_property": "Boolean",
+        "credentials": "Boolean"
+      },
+      "actions": {
+        "block": "Boolean",
+        "quarantine": "Boolean",
+        "encrypt": "Boolean",
+        "alert_only": "Boolean",
+        "user_notification": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "edr",
+    "icon": "💻",
+    "category": "security",
+    "description": "Endpoint detection and response system",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "edr_platform": ["CrowdStrike", "SentinelOne", "Microsoft Defender", "Carbon Black", "Cisco AMP"],
+        "managed_endpoints": "Integer"
+      },
+      "detection": {
+        "behavioral_analysis": "Boolean",
+        "machine_learning": "Boolean",
+        "signature_based": "Boolean",
+        "threat_intelligence": "Boolean",
+        "fileless_attack_detection": "Boolean",
+        "ransomware_detection": "Boolean"
+      },
+      "response": {
+        "auto_isolation": "Boolean",
+        "auto_remediation": "Boolean",
+        "rollback_capability": "Boolean",
+        "forensic_capture": "Boolean",
+        "remote_shell": "Boolean"
+      },
+      "monitoring": {
+        "process_monitoring": "Boolean",
+        "network_monitoring": "Boolean",
+        "file_integrity": "Boolean",
+        "registry_monitoring": "Boolean",
+        "memory_scanning": "Boolean"
+      }
+    }
+  }
+]
