@@ -1,0 +1,275 @@
+[
+  {
+    "component_type": "firewall",
+    "icon": "🔥",
+    "category": "security",
+    "description": "Network firewall for traffic filtering",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "firewall_type": ["Hardware", "Software", "Cloud-Native"],
+        "vendor": ["pfSense", "Cisco ASA", "Fortinet", "Palo Alto", "AWS Security Groups", "Azure NSG"],
+        "ip_address": "String"
+      },
+      "configuration": {
+        "default_policy": ["Deny All", "Allow All"],
+        "stateful_inspection": "Boolean",
+        "deep_packet_inspection": "Boolean",
+        "application_awareness": "Boolean",
+        "geo_blocking": "Boolean"
+      },
+      "rules": [
+        {
+          "rule_id": "Integer",
+          "name": "String",
+          "action": ["Allow", "Deny", "Log"],
+          "source": "String (IP/CIDR/Any)",
+          "destination": "String (IP/CIDR/Any)",
+          "ports": "Array or 'Any'",
+          "protocol": ["TCP", "UDP", "ICMP", "Any"],
+          "enabled": "Boolean",
+          "logging": "Boolean"
+        }
+      ],
+      "security": {
+        "intrusion_prevention": "Boolean",
+        "threat_intelligence": "Boolean",
+        "ssl_inspection": "Boolean",
+        "logging_enabled": "Boolean",
+        "log_destination": ["Local", "SIEM", "Syslog"]
+      }
+    }
+  },
+  {
+    "component_type": "load_balancer",
+    "icon": "⚖️",
+    "category": "network",
+    "description": "Distributes traffic across multiple servers",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "lb_type": ["Application (Layer 7)", "Network (Layer 4)", "Classic"],
+        "provider": ["HAProxy", "Nginx", "AWS ELB", "Azure Load Balancer", "F5"],
+        "ip_address": "String"
+      },
+      "configuration": {
+        "algorithm": ["Round Robin", "Least Connections", "IP Hash", "Weighted"],
+        "health_check_enabled": "Boolean",
+        "health_check_interval_seconds": "Integer",
+        "session_persistence": "Boolean",
+        "connection_draining": "Boolean"
+      },
+      "security": {
+        "ssl_termination": "Boolean",
+        "ssl_certificate": "String",
+        "tls_version": ["TLS 1.3", "TLS 1.2", "TLS 1.1"],
+        "waf_integration": "Boolean",
+        "ddos_protection": "Boolean",
+        "access_logs": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "vpn_gateway",
+    "icon": "🔐",
+    "category": "security",
+    "description": "Virtual Private Network gateway",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "vpn_type": ["Site-to-Site", "Client-to-Site", "Both"],
+        "protocol": ["OpenVPN", "IPSec", "WireGuard", "L2TP", "PPTP"],
+        "ip_address": "String"
+      },
+      "security": {
+        "encryption": ["AES-256", "AES-128", "ChaCha20"],
+        "authentication": ["Certificate", "Pre-Shared Key", "RADIUS", "LDAP"],
+        "mfa_enabled": "Boolean",
+        "split_tunneling": "Boolean",
+        "kill_switch": "Boolean",
+        "dns_leak_protection": "Boolean"
+      },
+      "configuration": {
+        "max_concurrent_connections": "Integer",
+        "bandwidth_limit_mbps": "Integer",
+        "logging_enabled": "Boolean",
+        "connection_timeout_minutes": "Integer"
+      }
+    }
+  },
+  {
+    "component_type": "nat_gateway",
+    "icon": "🌉",
+    "category": "network",
+    "description": "Network Address Translation gateway",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "nat_type": ["SNAT", "DNAT", "PAT"],
+        "ip_address": "String"
+      },
+      "configuration": {
+        "public_ip_addresses": "Array",
+        "private_subnet": "String (CIDR)",
+        "port_forwarding_rules": [
+          {
+            "external_port": "Integer",
+            "internal_ip": "String",
+            "internal_port": "Integer",
+            "protocol": ["TCP", "UDP"]
+          }
+        ]
+      },
+      "security": {
+        "logging_enabled": "Boolean",
+        "connection_tracking": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "router",
+    "icon": "🔀",
+    "category": "network",
+    "description": "Network router for traffic routing",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "router_type": ["Edge Router", "Core Router", "Virtual Router"],
+        "vendor": ["Cisco", "Juniper", "Mikrotik", "VyOS"],
+        "ip_address": "String"
+      },
+      "configuration": {
+        "routing_protocol": ["Static", "BGP", "OSPF", "EIGRP", "RIP"],
+        "interfaces": [
+          {
+            "interface_name": "String",
+            "ip_address": "String",
+            "subnet_mask": "String",
+            "vlan_id": "Integer or null"
+          }
+        ],
+        "default_gateway": "String"
+      },
+      "security": {
+        "acl_enabled": "Boolean",
+        "snmp_enabled": "Boolean",
+        "snmp_community": "String",
+        "logging_enabled": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "switch",
+    "icon": "🔌",
+    "category": "network",
+    "description": "Network switch for local connectivity",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "switch_type": ["Layer 2", "Layer 3", "Managed", "Unmanaged"],
+        "port_count": "Integer",
+        "vendor": ["Cisco", "HP", "Juniper", "Netgear"]
+      },
+      "configuration": {
+        "vlans_configured": "Array of integers",
+        "spanning_tree_enabled": "Boolean",
+        "port_security": "Boolean",
+        "storm_control": "Boolean"
+      },
+      "security": {
+        "port_security_enabled": "Boolean",
+        "mac_filtering": "Boolean",
+        "dhcp_snooping": "Boolean",
+        "arp_inspection": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "cdn",
+    "icon": "🌍",
+    "category": "network",
+    "description": "Content delivery network for global distribution",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "cdn_provider": ["Cloudflare", "AWS CloudFront", "Akamai", "Fastly", "Azure CDN"],
+        "origin_server": "String (IP or domain)"
+      },
+      "security": {
+        "ddos_protection": "Boolean",
+        "waf_enabled": "Boolean",
+        "ssl_enabled": "Boolean",
+        "bot_protection": "Boolean",
+        "rate_limiting": "Boolean",
+        "geo_blocking": "Boolean",
+        "hotlink_protection": "Boolean"
+      },
+      "configuration": {
+        "cache_ttl_seconds": "Integer",
+        "edge_locations": "Array of regions",
+        "compression_enabled": "Boolean",
+        "http2_enabled": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "bastion_host",
+    "icon": "🚪",
+    "category": "security",
+    "description": "Secure entry point for administrative access",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "os": ["Linux", "Windows"],
+        "ip_address": "String"
+      },
+      "security": {
+        "mfa_required": "Boolean",
+        "key_based_auth_only": "Boolean",
+        "session_recording": "Boolean",
+        "ip_whitelist": "Array",
+        "auto_logout_minutes": "Integer",
+        "command_logging": "Boolean",
+        "allowed_protocols": ["SSH", "RDP", "Both"]
+      },
+      "configuration": {
+        "max_sessions": "Integer",
+        "session_timeout_minutes": "Integer",
+        "access_hours": "String (e.g., '09:00-17:00')"
+      }
+    }
+  },
+  {
+    "component_type": "ids_ips",
+    "icon": "🛡️",
+    "category": "security",
+    "description": "Intrusion detection and prevention system",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "mode": ["IDS (Detection Only)", "IPS (Prevention)", "Both"],
+        "platform": ["Snort", "Suricata", "Zeek", "AWS GuardDuty", "Cisco Firepower"],
+        "ip_address": "String"
+      },
+      "detection": {
+        "signature_based": "Boolean",
+        "anomaly_based": "Boolean",
+        "behavioral_analysis": "Boolean",
+        "threat_intelligence": "Boolean",
+        "machine_learning": "Boolean"
+      },
+      "configuration": {
+        "inline_mode": "Boolean",
+        "alert_threshold": ["Low", "Medium", "High"],
+        "signature_updates": ["Automatic", "Manual"],
+        "log_destination": ["Local", "SIEM", "Syslog"]
+      },
+      "actions": {
+        "block_traffic": "Boolean",
+        "rate_limit": "Boolean",
+        "alert_only": "Boolean",
+        "quarantine": "Boolean"
+      }
+    }
+  }
+]
