@@ -1,0 +1,229 @@
+{
+  "cloud_components": [
+    {
+      "component_type": "cloud_vm",
+      "icon": "☁️",
+      "category": "cloud",
+      "description": "Cloud-based virtual machine",
+      "configurations": {
+        "basic": {
+          "name": "String",
+          "cloud_provider": ["AWS EC2", "Azure VM", "Google Compute Engine", "DigitalOcean Droplet"],
+          "region": "String",
+          "instance_type": "String (e.g., 't3.medium')",
+          "os": ["Linux", "Windows"],
+          "ip_address": "String",
+          "public_ip": "Boolean"
+        },
+        "security": {
+          "security_groups": "Array of rules",
+          "iam_role": "String",
+          "encryption": "Boolean",
+          "monitoring": "Boolean",
+          "backup": "Boolean",
+          "patch_management": ["Automatic", "Manual"],
+          "compliance": ["PCI-DSS", "HIPAA", "SOC2", "None"]
+        },
+        "network": {
+          "vpc_id": "String",
+          "subnet_id": "String",
+          "internet_gateway": "Boolean"
+        }
+      }
+    },
+    {
+      "component_type": "kubernetes",
+      "icon": "⚓",
+      "category": "cloud",
+      "description": "Kubernetes container orchestration",
+      "configurations": {
+        "basic": {
+          "name": "String",
+          "provider": ["EKS (AWS)", "AKS (Azure)", "GKE (Google)", "Self-Managed"],
+          "version": "String",
+          "node_count": "Integer"
+        },
+        "security": {
+          "rbac_enabled": "Boolean",
+          "pod_security_policies": "Boolean",
+          "network_policies": "Boolean",
+          "secrets_encryption": "Boolean",
+          "admission_controllers": "Boolean",
+          "image_scanning": "Boolean",
+          "runtime_security": "Boolean"
+        },
+        "configuration": {
+          "namespaces": "Integer",
+          "ingress_controller": ["Nginx", "Traefik", "HAProxy", "AWS ALB"],
+          "service_mesh": ["Istio", "Linkerd", "Consul", "None"],
+          "monitoring": ["Prometheus", "Datadog", "New Relic", "None"]
+        }
+      }
+    },
+    {
+      "component_type": "managed_database",
+      "icon": "💾",
+      "category": "cloud",
+      "description": "Cloud-managed database service",
+      "configurations": {
+        "basic": {
+          "name": "String",
+          "service": ["AWS RDS", "Azure SQL", "Google Cloud SQL", "AWS DynamoDB", "CosmosDB"],
+          "database_engine": ["MySQL", "PostgreSQL", "SQL Server", "Oracle", "NoSQL"],
+          "region": "String"
+        },
+        "security": {
+          "public_access": "Boolean",
+          "encryption_at_rest": "Boolean",
+          "encryption_in_transit": "Boolean",
+          "automated_backups": "Boolean",
+          "point_in_time_recovery": "Boolean",
+          "multi_az": "Boolean",
+          "iam_authentication": "Boolean",
+          "audit_logging": "Boolean"
+        },
+        "configuration": {
+          "instance_size": "String",
+          "storage_gb": "Integer",
+          "read_replicas": "Integer",
+          "auto_scaling": "Boolean"
+        }
+      }
+    },
+    {
+      "component_type": "cloud_api_gateway",
+      "icon": "🔌",
+      "category": "cloud",
+      "description": "Cloud API Gateway service",
+      "configurations": {
+        "basic": {
+          "name": "String",
+          "service": ["AWS API Gateway", "Azure API Management", "Google Apigee"],
+          "region": "String"
+        },
+        "security": {
+          "authentication": ["API Key", "OAuth 2.0", "JWT", "IAM"],
+          "rate_limiting": "Boolean",
+          "request_throttling": "Boolean",
+          "waf_integration": "Boolean",
+          "cors": "Boolean",
+          "ip_whitelisting": "Boolean"
+        },
+        "configuration": {
+          "caching": "Boolean",
+          "logging": "Boolean",
+          "request_validation": "Boolean",
+          "custom_domain": "Boolean"
+        }
+      }
+    },
+    {
+      "component_type": "cloud_storage",
+      "icon": "🪣",
+      "category": "cloud",
+      "description": "Cloud object storage (S3, Blob, etc.)",
+      "configurations": {
+        "basic": {
+          "name": "String",
+          "service": ["AWS S3", "Azure Blob", "Google Cloud Storage"],
+          "region": "String",
+          "storage_class": ["Standard", "Infrequent Access", "Archive"]
+        },
+        "security": {
+          "public_access": "Boolean",
+          "bucket_policy": "Object",
+          "encryption": "Boolean",
+          "versioning": "Boolean",
+          "mfa_delete": "Boolean",
+          "access_logging": "Boolean",
+          "object_lock": "Boolean",
+          "cors_configuration": "Boolean"
+        },
+        "data_classification": {
+          "contains_pii": "Boolean",
+          "data_sensitivity": ["Public", "Internal", "Confidential", "Restricted"]
+        }
+      }
+    },
+    {
+      "component_type": "cloud_load_balancer",
+      "icon": "⚖️",
+      "category": "cloud",
+      "description": "Cloud-native load balancer",
+      "configurations": {
+        "basic": {
+          "name": "String",
+          "service": ["AWS ALB/NLB", "Azure Load Balancer", "Google Cloud Load Balancer"],
+          "type": ["Application", "Network", "Classic"],
+          "region": "String"
+        },
+        "security": {
+          "ssl_termination": "Boolean",
+          "waf_integration": "Boolean",
+          "ddos_protection": "Boolean",
+          "access_logs": "Boolean"
+        },
+        "configuration": {
+          "health_checks": "Boolean",
+          "cross_zone": "Boolean",
+          "stickiness": "Boolean",
+          "target_groups": "Integer"
+        }
+      }
+    },
+    {
+      "component_type": "cloud_functions",
+      "icon": "⚡",
+      "category": "cloud",
+      "description": "Serverless functions (Lambda, Functions, etc.)",
+      "configurations": {
+        "basic": {
+          "name": "String",
+          "service": ["AWS Lambda", "Azure Functions", "Google Cloud Functions"],
+          "runtime": ["Node.js", "Python", "Go", "Java", ".NET"],
+          "region": "String"
+        },
+        "security": {
+          "iam_role": "String",
+          "vpc_enabled": "Boolean",
+          "environment_encryption": "Boolean",
+          "secrets_manager": "Boolean",
+          "layers_used": "Array"
+        },
+        "configuration": {
+          "memory_mb": "Integer",
+          "timeout_seconds": "Integer",
+          "concurrent_executions": "Integer",
+          "triggers": ["API Gateway", "S3", "EventBridge", "SQS"]
+        }
+      }
+    },
+    {
+      "component_type": "cloud_waf",
+      "icon": "🛡️",
+      "category": "cloud",
+      "description": "Cloud-based Web Application Firewall",
+      "configurations": {
+        "basic": {
+          "name": "String",
+          "service": ["AWS WAF", "Azure WAF", "Cloudflare", "Imperva"],
+          "associated_resources": "Array"
+        },
+        "protection": {
+          "managed_rules": "Boolean",
+          "rate_limiting": "Boolean",
+          "geo_blocking": "Boolean",
+          "ip_reputation": "Boolean",
+          "bot_control": "Boolean",
+          "account_takeover_prevention": "Boolean"
+        },
+        "configuration": {
+          "rule_priority": "Array",
+          "logging": "Boolean",
+          "metrics": "Boolean",
+          "sampling": "Boolean"
+        }
+      }
+    }
+  ]
+}
