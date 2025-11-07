@@ -1,0 +1,169 @@
+[
+  {
+    "component_type": "scada_ics",
+    "icon": "🏭",
+    "category": "specialized",
+    "description": "Industrial control system or SCADA",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "system_type": ["SCADA", "PLC", "DCS", "HMI"],
+        "vendor": "String",
+        "ip_address": "String"
+      },
+      "security": {
+        "air_gapped": "Boolean",
+        "network_segmentation": "Boolean",
+        "firewall_protected": "Boolean",
+        "authentication": "Boolean",
+        "firmware_updated": "Boolean",
+        "intrusion_detection": "Boolean",
+        "change_management": "Boolean"
+      },
+      "criticality": {
+        "safety_critical": "Boolean",
+        "production_critical": "Boolean",
+        "environmental_impact": ["None", "Low", "Medium", "High"]
+      }
+    }
+  },
+  {
+    "component_type": "payment_terminal",
+    "icon": "💳",
+    "category": "specialized",
+    "description": "Payment card processing terminal",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "terminal_type": ["POS Terminal", "Payment Gateway", "Virtual Terminal"],
+        "vendor": "String",
+        "ip_address": "String"
+      },
+      "security": {
+        "pci_dss_compliant": "Boolean",
+        "end_to_end_encryption": "Boolean",
+        "tokenization": "Boolean",
+        "emv_chip_reader": "Boolean",
+        "pin_pad_encrypted": "Boolean",
+        "tamper_detection": "Boolean",
+        "secure_boot": "Boolean"
+      },
+      "compliance": {
+        "pci_dss_level": ["Level 1", "Level 2", "Level 3", "Level 4"],
+        "last_audit_date": "Date",
+        "attestation_of_compliance": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "voip_server",
+    "icon": "📞",
+    "category": "specialized",
+    "description": "VoIP phone system server",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "voip_platform": ["Asterisk", "FreePBX", "3CX", "Cisco UCM"],
+        "ip_address": "String"
+      },
+      "security": {
+        "sip_encryption": "Boolean",
+        "srtp_enabled": "Boolean",
+        "authentication_required": "Boolean",
+        "fail2ban": "Boolean",
+        "firewall_rules": "Boolean",
+        "toll_fraud_prevention": "Boolean"
+      },
+      "configuration": {
+        "extensions": "Integer",
+        "trunk_lines": "Integer",
+        "recording_enabled": "Boolean",
+        "voicemail": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "video_surveillance",
+    "icon": "📹",
+    "category": "specialized",
+    "description": "Network Video Recorder or surveillance system",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "system_type": ["NVR", "DVR", "VMS"],
+        "camera_count": "Integer",
+        "ip_address": "String"
+      },
+      "security": {
+        "default_credentials": "Boolean",
+        "encryption": "Boolean",
+        "firmware_updated": "Boolean",
+        "internet_accessible": "Boolean",
+        "authentication_required": "Boolean",
+        "network_segmentation": "Boolean"
+      },
+      "configuration": {
+        "retention_days": "Integer",
+        "remote_access": "Boolean",
+        "motion_detection": "Boolean",
+        "cloud_backup": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "building_management",
+    "icon": "🏢",
+    "category": "specialized",
+    "description": "Building automation and management system",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "systems_managed": ["HVAC", "Lighting", "Access Control", "Fire Alarm", "Elevator", "Energy Management"],
+        "vendor": "String",
+        "ip_address": "String"
+      },
+      "security": {
+        "network_segmentation": "Boolean",
+        "default_credentials": "Boolean",
+        "encryption": "Boolean",
+        "authentication": "Boolean",
+        "firmware_updated": "Boolean",
+        "remote_access": "Boolean",
+        "vpn_required": "Boolean"
+      },
+      "configuration": {
+        "monitoring_24_7": "Boolean",
+        "automated_controls": "Boolean",
+        "alarm_integration": "Boolean",
+        "energy_optimization": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "blockchain_node",
+    "icon": "⛓️",
+    "category": "specialized",
+    "description": "Blockchain network node",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "blockchain": ["Bitcoin", "Ethereum", "Hyperledger", "Polygon", "Custom"],
+        "node_type": ["Full Node", "Light Node", "Validator", "Miner"],
+        "ip_address": "String"
+      },
+      "security": {
+        "wallet_encryption": "Boolean",
+        "cold_storage": "Boolean",
+        "multi_sig": "Boolean",
+        "firewall_protected": "Boolean",
+        "ddos_protection": "Boolean",
+        "key_management": ["HSM", "Software", "Cloud KMS"]
+      },
+      "configuration": {
+        "consensus_mechanism": ["PoW", "PoS", "PoA", "PBFT"],
+        "sync_status": ["Synced", "Syncing", "Not Synced"],
+        "peer_connections": "Integer"
+      }
+    }
+  }
+]
