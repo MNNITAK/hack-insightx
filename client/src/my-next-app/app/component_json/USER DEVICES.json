@@ -1,0 +1,193 @@
+[
+  {
+    "component_type": "user_workstation",
+    "icon": "💻",
+    "category": "endpoints",
+    "description": "Employee desktop/laptop computer",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "device_type": ["Desktop", "Laptop"],
+        "os": ["Windows 10", "Windows 11", "macOS", "Linux"],
+        "ip_address": "String"
+      },
+      "user_info": {
+        "department": ["Engineering", "Marketing", "Sales", "HR", "Finance", "IT", "Executive"],
+        "access_level": ["Standard User", "Power User", "Admin", "Privileged"],
+        "typical_work_hours": "String (e.g., '09:00-17:00')",
+        "remote_worker": "Boolean"
+      },
+      "security": {
+        "antivirus_enabled": "Boolean",
+        "antivirus_vendor": ["Windows Defender", "Symantec", "McAfee", "Kaspersky", "CrowdStrike"],
+        "firewall_enabled": "Boolean",
+        "full_disk_encryption": "Boolean",
+        "screen_lock_enabled": "Boolean",
+        "screen_lock_timeout_minutes": "Integer",
+        "admin_privileges": "Boolean",
+        "patch_level": ["Current", "1-30 days old", "30-90 days old", "90+ days old"],
+        "edr_agent": "Boolean",
+        "dlp_agent": "Boolean",
+        "vpn_required": "Boolean"
+      },
+      "applications": {
+        "office_suite": "Boolean",
+        "development_tools": "Boolean",
+        "database_access": "Boolean",
+        "admin_tools": "Boolean",
+        "remote_desktop": "Boolean"
+      },
+      "vulnerabilities": [
+        "Local admin privileges",
+        "Outdated software",
+        "Weak password",
+        "No encryption",
+        "Missing security patches",
+        "Unauthorized software"
+      ]
+    }
+  },
+  {
+    "component_type": "mobile_device",
+    "icon": "📱",
+    "category": "endpoints",
+    "description": "Smartphone or tablet",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "device_type": ["iPhone", "iPad", "Android Phone", "Android Tablet"],
+        "os": ["iOS", "Android"],
+        "os_version": "String"
+      },
+      "security": {
+        "mdm_enrolled": "Boolean",
+        "mdm_platform": ["Intune", "Jamf", "MobileIron", "VMware Workspace ONE"],
+        "device_encryption": "Boolean",
+        "passcode_required": "Boolean",
+        "biometric_auth": "Boolean",
+        "remote_wipe": "Boolean",
+        "jailbroken_rooted": "Boolean",
+        "vpn_configured": "Boolean",
+        "app_whitelist": "Boolean"
+      },
+      "configuration": {
+        "corporate_email": "Boolean",
+        "access_to_files": "Boolean",
+        "access_to_databases": "Boolean",
+        "camera_disabled": "Boolean",
+        "screenshot_disabled": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "iot_device",
+    "icon": "📡",
+    "category": "endpoints",
+    "description": "Internet of Things device",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "device_type": ["Smart Camera", "Sensor", "Smart Lock", "Industrial Controller", "Smart TV", "Printer"],
+        "ip_address": "String",
+        "manufacturer": "String",
+        "firmware_version": "String"
+      },
+      "security": {
+        "default_credentials": "Boolean",
+        "firmware_updates": ["Automatic", "Manual", "Never"],
+        "encryption": "Boolean",
+        "authentication_required": "Boolean",
+        "network_segmentation": "Boolean",
+        "internet_accessible": "Boolean"
+      },
+      "vulnerabilities": [
+        "Default credentials",
+        "Outdated firmware",
+        "No encryption",
+        "Exposed to internet",
+        "Known CVEs"
+      ]
+    }
+  },
+  {
+    "component_type": "admin_terminal",
+    "icon": "🖥️",
+    "category": "endpoints",
+    "description": "Privileged administrative workstation",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "os": ["Windows", "Linux", "macOS"],
+        "ip_address": "String"
+      },
+      "security": {
+        "hardened": "Boolean",
+        "mfa_required": "Boolean",
+        "full_disk_encryption": "Boolean",
+        "privileged_access_workstation": "Boolean",
+        "no_internet_access": "Boolean",
+        "session_recording": "Boolean",
+        "just_in_time_admin": "Boolean",
+        "security_baseline": ["CIS", "STIG", "Custom"]
+      },
+      "access": {
+        "access_to_production": "Boolean",
+        "access_to_databases": "Boolean",
+        "access_to_cloud_console": "Boolean",
+        "allowed_ip_addresses": "Array"
+      }
+    }
+  },
+  {
+    "component_type": "kiosk",
+    "icon": "🖥️",
+    "category": "endpoints",
+    "description": "Public-facing kiosk or terminal",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "location": "String",
+        "os": ["Windows", "Linux", "ChromeOS"],
+        "ip_address": "String"
+      },
+      "security": {
+        "locked_down_mode": "Boolean",
+        "application_whitelisting": "Boolean",
+        "no_usb_access": "Boolean",
+        "automatic_logout": "Boolean",
+        "logout_timeout_seconds": "Integer",
+        "content_filtering": "Boolean",
+        "network_isolation": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "printer",
+    "icon": "🖨️",
+    "category": "endpoints",
+    "description": "Network printer or multi-function device",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "printer_type": ["Laser", "Inkjet", "Multi-Function"],
+        "ip_address": "String",
+        "manufacturer": "String"
+      },
+      "security": {
+        "default_credentials": "Boolean",
+        "encryption": "Boolean",
+        "secure_print": "Boolean",
+        "audit_logging": "Boolean",
+        "firmware_updated": "Boolean",
+        "network_segmentation": "Boolean",
+        "data_overwrite": "Boolean"
+      },
+      "features": {
+        "scan_to_email": "Boolean",
+        "scan_to_network": "Boolean",
+        "fax_capability": "Boolean",
+        "hard_drive_installed": "Boolean"
+      }
+    }
+  }
+]
