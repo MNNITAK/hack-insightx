@@ -1,0 +1,423 @@
+[
+  {
+    "component_type": "web_server",
+    "icon": "🌐",
+    "category": "compute",
+    "description": "Public-facing web server hosting applications",
+    "configurations": {
+      "basic": {
+        "name": "String (e.g., 'prod-web-01')",
+        "os": ["Linux", "Windows", "FreeBSD"],
+        "os_version": "String (e.g., 'Ubuntu 22.04', 'Windows Server 2022')",
+        "ip_address": "String (e.g., '10.0.1.10')",
+        "location": ["On-Premise", "AWS", "Azure", "GCP", "DigitalOcean"]
+      },
+      "network": {
+        "open_ports": "Array of integers (e.g., [80, 443, 22])",
+        "exposed_to_internet": "Boolean",
+        "ipv6_enabled": "Boolean"
+      },
+      "services": {
+        "web_server_type": ["Nginx", "Apache", "IIS", "Caddy", "Lighttpd"],
+        "web_server_version": "String",
+        "application_stack": ["Node.js", "Python/Django", "PHP", "Ruby on Rails", ".NET", "Java/Tomcat"],
+        "ssl_tls_version": ["TLS 1.3", "TLS 1.2", "TLS 1.1", "None"],
+        "http2_enabled": "Boolean"
+      },
+      "security": {
+        "firewall_enabled": "Boolean",
+        "waf_enabled": "Boolean",
+        "waf_provider": ["CloudFlare", "AWS WAF", "ModSecurity", "Imperva", "None"],
+        "rate_limiting_enabled": "Boolean",
+        "ddos_protection": "Boolean",
+        "fail2ban_enabled": "Boolean",
+        "selinux_enabled": "Boolean",
+        "security_headers": "Boolean (HSTS, CSP, X-Frame-Options)",
+        "patch_level": ["Current", "1-30 days old", "30-90 days old", "90+ days old"],
+        "vulnerability_scanning": "Boolean"
+      },
+      "authentication": {
+        "ssh_enabled": "Boolean",
+        "ssh_key_only": "Boolean",
+        "mfa_enabled": "Boolean",
+        "password_policy": ["Strong", "Medium", "Weak"],
+        "admin_access": ["Key-based", "Password", "Both"]
+      },
+      "monitoring": {
+        "logging_enabled": "Boolean",
+        "log_destination": ["Local", "SIEM", "Cloud"],
+        "intrusion_detection": "Boolean",
+        "performance_monitoring": "Boolean"
+      },
+      "resources": {
+        "cpu_cores": "Integer",
+        "memory_gb": "Integer",
+        "storage_gb": "Integer",
+        "bandwidth_mbps": "Integer"
+      }
+    },
+    "common_vulnerabilities": [
+      "Exposed admin panel",
+      "Outdated web server version",
+      "Missing security headers",
+      "SSL/TLS misconfiguration",
+      "Directory listing enabled",
+      "Default credentials",
+      "Unpatched CVEs"
+    ]
+  },
+  {
+    "component_type": "application_server",
+    "icon": "💼",
+    "category": "compute",
+    "description": "Server running business logic and application code",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "os": ["Linux", "Windows"],
+        "os_version": "String",
+        "ip_address": "String",
+        "zone": ["DMZ", "Internal", "Private"]
+      },
+      "application": {
+        "runtime": ["Java/JVM", "Node.js", ".NET Core", "Python", "Go", "Ruby"],
+        "runtime_version": "String",
+        "application_server": ["Tomcat", "JBoss", "WebLogic", "WildFly", "WebSphere"],
+        "container_runtime": ["Docker", "containerd", "None"],
+        "microservices": "Boolean"
+      },
+      "security": {
+        "firewall_enabled": "Boolean",
+        "api_security": "Boolean",
+        "input_validation": "Boolean",
+        "output_encoding": "Boolean",
+        "secrets_management": ["Vault", "AWS Secrets Manager", "Azure Key Vault", "Environment Variables", "Hardcoded"],
+        "dependency_scanning": "Boolean",
+        "code_signing": "Boolean"
+      },
+      "performance": {
+        "auto_scaling": "Boolean",
+        "load_balancer_backend": "Boolean",
+        "caching_enabled": "Boolean",
+        "session_management": ["In-Memory", "Redis", "Database", "Sticky Sessions"]
+      }
+    }
+  },
+  {
+    "component_type": "database",
+    "icon": "💾",
+    "category": "data",
+    "description": "Database server storing application data",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "os": ["Linux", "Windows"],
+        "ip_address": "String",
+        "zone": ["Internal", "Private"]
+      },
+      "database": {
+        "db_type": ["MySQL", "PostgreSQL", "MongoDB", "Oracle", "SQL Server", "Redis", "Cassandra", "DynamoDB"],
+        "db_version": "String",
+        "port": "Integer (e.g., 3306, 5432, 27017)",
+        "database_size_gb": "Integer",
+        "replication": ["None", "Master-Slave", "Master-Master", "Cluster"],
+        "sharding": "Boolean"
+      },
+      "security": {
+        "firewall_enabled": "Boolean",
+        "exposed_to_internet": "Boolean",
+        "encryption_at_rest": "Boolean",
+        "encryption_in_transit": "Boolean",
+        "ssl_required": "Boolean",
+        "authentication_method": ["Password", "Certificate", "IAM", "Kerberos"],
+        "access_control": ["IP Whitelist", "VPN Only", "Internal Only", "Public"],
+        "audit_logging": "Boolean",
+        "database_firewall": "Boolean"
+      },
+      "data_classification": {
+        "contains_pii": "Boolean",
+        "contains_phi": "Boolean",
+        "contains_pci": "Boolean",
+        "data_sensitivity": ["Public", "Internal", "Confidential", "Restricted"],
+        "compliance_requirements": ["PCI-DSS", "HIPAA", "GDPR", "SOC2", "None"]
+      },
+      "backup": {
+        "backup_enabled": "Boolean",
+        "backup_frequency": ["Real-time", "Hourly", "Daily", "Weekly", "None"],
+        "backup_retention_days": "Integer",
+        "backup_encryption": "Boolean",
+        "point_in_time_recovery": "Boolean",
+        "backup_location": ["On-Premise", "Cloud", "Off-Site"]
+      },
+      "performance": {
+        "query_caching": "Boolean",
+        "connection_pooling": "Boolean",
+        "read_replicas": "Integer",
+        "max_connections": "Integer"
+      }
+    }
+  },
+  {
+    "component_type": "api_gateway",
+    "icon": "🔌",
+    "category": "compute",
+    "description": "API gateway managing API requests and authentication",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "provider": ["Kong", "AWS API Gateway", "Azure API Management", "Apigee", "Custom"],
+        "ip_address": "String"
+      },
+      "security": {
+        "authentication": ["OAuth 2.0", "JWT", "API Keys", "Basic Auth", "mTLS", "None"],
+        "authorization": "Boolean",
+        "rate_limiting": "Boolean",
+        "rate_limit_per_minute": "Integer",
+        "ip_whitelisting": "Boolean",
+        "cors_enabled": "Boolean",
+        "api_key_rotation": "Boolean"
+      },
+      "features": {
+        "request_validation": "Boolean",
+        "response_transformation": "Boolean",
+        "caching": "Boolean",
+        "logging": "Boolean",
+        "analytics": "Boolean",
+        "throttling": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "cache_server",
+    "icon": "🗄️",
+    "category": "data",
+    "description": "Caching layer for performance optimization",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "cache_type": ["Redis", "Memcached", "Varnish", "CDN Edge Cache"],
+        "ip_address": "String",
+        "port": "Integer"
+      },
+      "security": {
+        "password_protected": "Boolean",
+        "encryption_in_transit": "Boolean",
+        "acl_enabled": "Boolean",
+        "exposed_to_internet": "Boolean"
+      },
+      "performance": {
+        "memory_size_gb": "Integer",
+        "eviction_policy": ["LRU", "LFU", "FIFO", "TTL"],
+        "persistence": "Boolean",
+        "clustering": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "file_storage",
+    "icon": "☁️",
+    "category": "data",
+    "description": "File and object storage system",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "storage_type": ["AWS S3", "Azure Blob", "Google Cloud Storage", "MinIO", "NFS", "CIFS/SMB"],
+        "storage_size_tb": "Integer"
+      },
+      "security": {
+        "public_access": "Boolean",
+        "encryption_at_rest": "Boolean",
+        "encryption_in_transit": "Boolean",
+        "access_control": ["IAM", "ACL", "Bucket Policy", "Public"],
+        "versioning": "Boolean",
+        "mfa_delete": "Boolean",
+        "access_logging": "Boolean"
+      },
+      "data_classification": {
+        "contains_pii": "Boolean",
+        "data_sensitivity": ["Public", "Internal", "Confidential", "Restricted"]
+      },
+      "backup": {
+        "backup_enabled": "Boolean",
+        "cross_region_replication": "Boolean",
+        "lifecycle_policies": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "dns_server",
+    "icon": "🌐",
+    "category": "infrastructure",
+    "description": "Domain Name System server",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "dns_provider": ["BIND", "PowerDNS", "Route53", "Cloudflare", "Azure DNS"],
+        "ip_address": "String"
+      },
+      "security": {
+        "dnssec_enabled": "Boolean",
+        "dns_over_https": "Boolean",
+        "dns_over_tls": "Boolean",
+        "rate_limiting": "Boolean",
+        "query_logging": "Boolean",
+        "response_rate_limiting": "Boolean"
+      },
+      "configuration": {
+        "zones_managed": "Integer",
+        "public_facing": "Boolean",
+        "recursive_queries": "Boolean",
+        "caching": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "container_registry",
+    "icon": "🐳",
+    "category": "infrastructure",
+    "description": "Docker/container image registry",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "registry_type": ["Docker Hub", "AWS ECR", "Azure ACR", "Google GCR", "Harbor", "JFrog"],
+        "access": ["Public", "Private"]
+      },
+      "security": {
+        "authentication_required": "Boolean",
+        "image_scanning": "Boolean",
+        "vulnerability_scanning": "Boolean",
+        "image_signing": "Boolean",
+        "access_control": "Boolean",
+        "encryption_at_rest": "Boolean"
+      }
+    }
+  },
+  
+{
+    "component_type": "cicd_server",
+    "icon": "⚙️",
+    "category": "infrastructure",
+    "description": "Continuous Integration/Deployment server",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "cicd_platform": ["Jenkins", "GitLab CI", "GitHub Actions", "CircleCI", "Azure DevOps", "TeamCity"],
+        "ip_address": "String"
+      },
+      "security": {
+        "authentication": "Boolean",
+        "rbac_enabled": "Boolean",
+        "secrets_management": ["Vault", "Built-in", "Environment Variables"],
+        "code_signing": "Boolean",
+        "artifact_scanning": "Boolean",
+        "pipeline_approval": "Boolean"
+      },
+      "features": {
+        "auto_deployment": "Boolean",
+        "rollback_capability": "Boolean",
+        "audit_logging": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "email_server",
+    "icon": "📧",
+    "category": "infrastructure",
+    "description": "Mail server for sending/receiving emails",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "email_server": ["Postfix", "Sendmail", "Exchange", "Gmail Workspace", "Office 365"],
+        "ip_address": "String"
+      },
+      "security": {
+        "spf_enabled": "Boolean",
+        "dkim_enabled": "Boolean",
+        "dmarc_enabled": "Boolean",
+        "tls_encryption": "Boolean",
+        "spam_filtering": "Boolean",
+        "virus_scanning": "Boolean",
+        "phishing_protection": "Boolean",
+        "email_encryption": ["None", "S/MIME", "PGP"],
+        "attachment_filtering": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "backup_server",
+    "icon": "💿",
+    "category": "infrastructure",
+    "description": "Centralized backup and recovery system",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "backup_solution": ["Veeam", "Commvault", "AWS Backup", "Custom"],
+        "storage_capacity_tb": "Integer"
+      },
+      "security": {
+        "encryption": "Boolean",
+        "encryption_algorithm": ["AES-256", "AES-128"],
+        "immutable_backups": "Boolean",
+        "air_gapped": "Boolean",
+        "access_control": "Boolean"
+      },
+      "configuration": {
+        "backup_retention_days": "Integer",
+        "backup_frequency": ["Real-time", "Hourly", "Daily", "Weekly"],
+        "offsite_backup": "Boolean",
+        "backup_testing": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "monitoring_server",
+    "icon": "📊",
+    "category": "infrastructure",
+    "description": "System monitoring and observability",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "monitoring_tool": ["Prometheus", "Grafana", "Datadog", "New Relic", "Nagios", "Zabbix"],
+        "ip_address": "String"
+      },
+      "security": {
+        "authentication_enabled": "Boolean",
+        "encrypted_communication": "Boolean",
+        "rbac": "Boolean"
+      },
+      "features": {
+        "log_aggregation": "Boolean",
+        "metrics_collection": "Boolean",
+        "alerting": "Boolean",
+        "dashboards": "Boolean",
+        "apm_enabled": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "serverless_function",
+    "icon": "⚡",
+    "category": "compute",
+    "description": "Serverless computing function",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "provider": ["AWS Lambda", "Azure Functions", "Google Cloud Functions", "Cloudflare Workers"],
+        "runtime": ["Node.js", "Python", "Go", "Java", ".NET", "Ruby"]
+      },
+      "security": {
+        "iam_role": "String",
+        "vpc_enabled": "Boolean",
+        "environment_variables_encrypted": "Boolean",
+        "secrets_manager": "Boolean",
+        "function_url_auth": ["IAM", "None"]
+      },
+      "configuration": {
+        "memory_mb": "Integer",
+        "timeout_seconds": "Integer",
+        "concurrent_executions": "Integer",
+        "triggers": ["API Gateway", "S3", "EventBridge", "SQS", "HTTP"]
+      }
+    }
+  }
+]
