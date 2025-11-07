@@ -1,0 +1,122 @@
+[
+  {
+    "component_type": "vdi",
+    "icon": "🖥️",
+    "category": "infrastructure",
+    "description": "Virtual desktop infrastructure host",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "vdi_platform": [
+          "VMware Horizon",
+          "Citrix Virtual Apps",
+          "Windows Virtual Desktop",
+          "Amazon WorkSpaces"
+        ],
+        "ip_address": "String",
+        "desktop_count": "Integer"
+      },
+      "security": {
+        "mfa_required": "Boolean",
+        "encryption": "Boolean",
+        "session_recording": "Boolean",
+        "usb_redirection": "Boolean",
+        "clipboard_control": "Boolean",
+        "watermarking": "Boolean",
+        "dlp_integration": "Boolean"
+      },
+      "configuration": {
+        "persistent_desktops": "Boolean",
+        "gpu_acceleration": "Boolean",
+        "profile_management": "Boolean",
+        "application_virtualization": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "pentest_lab",
+    "icon": "🎯",
+    "category": "security",
+    "description": "Isolated penetration testing environment",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "os": ["Kali Linux", "Parrot OS", "Windows with tools"],
+        "ip_address": "String"
+      },
+      "security": {
+        "network_isolation": "Boolean",
+        "no_production_access": "Boolean",
+        "activity_logging": "Boolean",
+        "authorized_personnel_only": "Boolean"
+      },
+      "tools": {
+        "vulnerability_scanners": ["Nessus", "OpenVAS", "Qualys"],
+        "exploitation_frameworks": ["Metasploit", "Cobalt Strike"],
+        "wireless_tools": "Boolean",
+        "web_app_tools": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "sandbox",
+    "icon": "📦",
+    "category": "security",
+    "description": "Isolated malware analysis sandbox",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "sandbox_type": [
+          "Cuckoo",
+          "Joe Sandbox",
+          "Any.Run",
+          "FireEye",
+          "Custom"
+        ],
+        "ip_address": "String"
+      },
+      "security": {
+        "network_isolation": "Boolean",
+        "virtual_environment": "Boolean",
+        "snapshot_restore": "Boolean",
+        "no_outbound_access": "Boolean"
+      },
+      "features": {
+        "automated_analysis": "Boolean",
+        "behavioral_analysis": "Boolean",
+        "network_traffic_capture": "Boolean",
+        "memory_dump": "Boolean",
+        "api_call_tracking": "Boolean"
+      }
+    }
+  },
+  {
+    "component_type": "air_gapped",
+    "icon": "🔌❌",
+    "category": "security",
+    "description": "Physically isolated system (no network)",
+    "configurations": {
+      "basic": {
+        "name": "String",
+        "os": ["Linux", "Windows", "Custom"],
+        "purpose": "String"
+      },
+      "security": {
+        "no_network_connection": "Boolean",
+        "usb_disabled": "Boolean",
+        "bluetooth_disabled": "Boolean",
+        "wifi_disabled": "Boolean",
+        "physical_access_control": "Boolean",
+        "faraday_cage": "Boolean"
+      },
+      "data_classification": {
+        "classification": ["Top Secret", "Secret", "Confidential"],
+        "data_transfer_method": [
+          "None",
+          "Approved Removable Media",
+          "Manual Entry"
+        ]
+      }
+    }
+  }
+]
