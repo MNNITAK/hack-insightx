@@ -1,71 +1,90 @@
 # 🛡️ eBPF Network Micro-Segmentation
 
-Real-time network monitoring with allow/deny rules.
+Real-time network monitoring with process-level visibility. See every connection, control every process.
 
 ## ⚡ Quick Start
 ```bash
-git clone https://github.com/YOUR-USERNAME/ebpf-microseg.git
+git clone https://github.com/MNNITAK/hack-insightx.git
 cd ebpf-microseg
 sudo ./setup.sh
 ./install.sh
 ```
 
-Open: **http://localhost:8501**
+**Dashboard:** http://localhost:8501
+
+## 🎯 Features
+
+- ✅ Real process names, PIDs, and exe paths
+- ✅ Block by process/IP/port with visual rules
+- ✅ Live dashboard - no terminal needed
+- ✅ Auto-starts on boot
+- ✅ Zero cost, fully open source
 
 ## 📋 Requirements
 
-- Ubuntu 20.04+
+- Ubuntu 20.04+ (any Linux)
 - Root access
-- Go, Python 3, tcpdump
+- 512MB RAM minimum
 
-## 🎯 Usage
+## 🎮 Usage
 
-### Add Block Rule
+### View Connections
+Dashboard shows every TCP connection with real process info.
+
+### Block a Process
 1. Dashboard → Rules tab
-2. Add: `Process: curl, IP: *, Port: 443, Action: deny`
+2. Add rule: `Process: curl, IP: *, Port: 443, Action: deny`
 3. Switch to "enforce" mode
-4. Test: `curl https://google.com`
+4. Test: `curl https://google.com` → Shows "blocked"
 
-### Commands
+## 🛠️ Commands
 ```bash
-# Start
+# Start/stop
 sudo systemctl start ebpf-collector ebpf-agent ebpf-ui
-
-# Stop
 sudo systemctl stop ebpf-collector ebpf-agent ebpf-ui
 
 # Logs
-sudo journalctl -u ebpf-collector -f
+sudo journalctl -u ebpf-agent -f
+
+# Manual run (3 terminals)
+cd collector && sudo go run main.go
+cd agent && sudo go run m.go
+cd ui && source venv/bin/activate && streamlit run app.py
 ```
+
+## 🏗️ How It Works
+
+**Agent** (`ss -tunp` + `/proc`) → **Collector** (rules engine) → **Dashboard** (Streamlit)
 
 ## 📁 Structure
 ```
 ├── agent/       # Network monitor
-├── collector/   # API + Rules
+├── collector/   # API + SQLite
 ├── ui/          # Dashboard
-└── systemd/     # Services
+└── systemd/     # Auto-start services
 ```
 
-## 🔧 Manual Run
-```bash
-# Terminal 1
-cd collector && sudo go run main.go
+## 🆚 vs Enterprise Tools
 
-# Terminal 2
-cd agent && sudo go run m.go
+| Feature | Enterprise | This |
+|---------|-----------|------|
+| Cost | $50K+/year | FREE |
+| Setup | Weeks | 5 min |
+| Process Info | Yes | Yes |
+| Open Source | No | Yes |
 
-# Terminal 3
-cd ui && source venv/bin/activate && streamlit run app.py
-```
+## 🔒 Production Notes
 
-## 📖 How It Works
+MVP only. Add: auth, HTTPS, PostgreSQL, rate limiting for production.
 
-**Agent** captures TCP connections → **Collector** checks rules → **Dashboard** displays
-
-## �� Contributing
-
-PRs welcome!
-
-## 📄 License
+## 📝 License
 
 MIT
+
+## 👤 Author
+
+[@AbhishekPandey91](https://github.com/AbhishekPandey91)
+
+---
+
+⭐ Star if useful! |
