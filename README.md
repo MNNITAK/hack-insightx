@@ -21,7 +21,7 @@
 ```
 Traditional Security Testing              InsightX Solution
 ━━━━━━━━━━━━━━━━━━━━━━━━━━              ━━━━━━━━━━━━━━━━━━━━━━
-❌ Expensive cloud infrastructure         ✅ Virtual sandbox - zero cost
+                                          ✅ Virtual sandbox - zero cost
 ❌ Complex Docker setups                  ✅ One-click deployment
 ❌ Weeks of configuration                 ✅ < 5 minute setup
 ❌ Blind to process-level threats         ✅ eBPF X-ray vision
