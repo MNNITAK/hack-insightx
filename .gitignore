@@ -1,0 +1,8 @@
+*.db
+*.log
+*.o
+go.sum
+__pycache__/
+venv/
+*.pyc
+.vscode/

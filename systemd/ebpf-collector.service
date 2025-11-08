@@ -1,0 +1,13 @@
+[Unit]
+Description=eBPF Collector
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/abhishek/ebpf-microseg/collector
+ExecStart=/usr/bin/go run main.go
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

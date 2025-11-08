@@ -1,0 +1,22 @@
+# eBPF Micro-Segmentation Configuration
+
+# Operating mode: observe or enforce
+mode: observe
+
+# Collector endpoint
+collector:
+  url: http://localhost:8080
+  port: 8080
+
+# Agent settings
+agent:
+  batch_size: 10
+  flush_interval: 5s
+
+# Rules file (optional)
+rules_file: ./collector/rules.json
+
+# Logging
+logging:
+  level: info
+  file: /var/log/ebpf-microseg.log

@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "id": 1,
+      "process": "*",
+      "dst_ip": "127.0.0.1",
+      "dst_port": 0,
+      "action": "allow",
+      "comment": "Allow all localhost connections"
+    },
+    {
+      "id": 2,
+      "process": "curl",
+      "dst_ip": "*",
+      "dst_port": 443,
+      "action": "allow",
+      "comment": "Allow curl to HTTPS"
+    }
+  ]
+}

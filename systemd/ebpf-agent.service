@@ -1,0 +1,13 @@
+[Unit]
+Description=eBPF Agent
+After=network.target ebpf-collector.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/abhishek/ebpf-microseg/agent
+ExecStart=/usr/bin/go run m.go --mode observe
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

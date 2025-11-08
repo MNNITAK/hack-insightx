@@ -1,0 +1,113 @@
+#include <linux/bpf.h>
+#include <linux/ptrace.h>
+#include <linux/tcp.h>
+#include <linux/in.h>
+#include <linux/ip.h>
+#include <bpf/bpf_helpers.h>
+#include <bpf/bpf_tracing.h>
+
+#define TASK_COMM_LEN 16
+#define MAX_ENTRIES 10240
+
+// Event structure sent to userspace
+struct event_t {
+    __u32 pid;
+    __u32 tid;
+    char comm[TASK_COMM_LEN];
+    __u32 saddr;
+    __u32 daddr;
+    __u16 sport;
+    __u16 dport;
+    __u8 type; // 0=connect, 1=accept
+    __u64 timestamp;
+};
+
+// Ring buffer to send events to userspace
+struct {
+    __uint(type, BPF_MAP_TYPE_RINGBUF);
+    __uint(max_entries, 256 * 1024);
+} events SEC(".maps");
+
+// Helper to read IPv4 address
+static __always_inline __u32 get_ipv4_addr(struct sock *sk, int is_dest) {
+    __u32 addr = 0;
+    if (is_dest) {
+        BPF_CORE_READ_INTO(&addr, sk, __sk_common.skc_daddr);
+    } else {
+        BPF_CORE_READ_INTO(&addr, sk, __sk_common.skc_rcv_saddr);
+    }
+    return addr;
+}
+
+// Helper to read port
+static __always_inline __u16 get_port(struct sock *sk, int is_dest) {
+    __u16 port = 0;
+    if (is_dest) {
+        BPF_CORE_READ_INTO(&port, sk, __sk_common.skc_dport);
+    } else {
+        BPF_CORE_READ_INTO(&port, sk, __sk_common.skc_num);
+    }
+    return port;
+}
+
+// Trace tcp_connect
+SEC("kprobe/tcp_connect")
+int BPF_KPROBE(trace_tcp_connect, struct sock *sk)
+{
+    struct event_t *event;
+    __u64 pid_tgid = bpf_get_current_pid_tgid();
+    
+    // Reserve space in ring buffer
+    event = bpf_ringbuf_reserve(&events, sizeof(*event), 0);
+    if (!event)
+        return 0;
+
+    // Fill event data
+    event->pid = pid_tgid >> 32;
+    event->tid = (__u32)pid_tgid;
+    event->type = 0; // connect
+    event->timestamp = bpf_ktime_get_ns();
+    
+    bpf_get_current_comm(&event->comm, sizeof(event->comm));
+    
+    event->saddr = get_ipv4_addr(sk, 0);
+    event->daddr = get_ipv4_addr(sk, 1);
+    event->sport = get_port(sk, 0);
+    event->dport = bpf_ntohs(get_port(sk, 1));
+
+    // Submit event
+    bpf_ringbuf_submit(event, 0);
+    return 0;
+}
+
+// Trace tcp_accept (simplified - tracks established connections)
+SEC("kretprobe/inet_csk_accept")
+int BPF_KRETPROBE(trace_tcp_accept, struct sock *sk)
+{
+    if (sk == NULL)
+        return 0;
+
+    struct event_t *event;
+    __u64 pid_tgid = bpf_get_current_pid_tgid();
+    
+    event = bpf_ringbuf_reserve(&events, sizeof(*event), 0);
+    if (!event)
+        return 0;
+
+    event->pid = pid_tgid >> 32;
+    event->tid = (__u32)pid_tgid;
+    event->type = 1; // accept
+    event->timestamp = bpf_ktime_get_ns();
+    
+    bpf_get_current_comm(&event->comm, sizeof(event->comm));
+    
+    event->saddr = get_ipv4_addr(sk, 0);
+    event->daddr = get_ipv4_addr(sk, 1);
+    event->sport = get_port(sk, 0);
+    event->dport = bpf_ntohs(get_port(sk, 1));
+
+    bpf_ringbuf_submit(event, 0);
+    return 0;
+}
+
+char LICENSE[] SEC("license") = "GPL";

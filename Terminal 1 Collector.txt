@@ -1,0 +1,58 @@
+Terminal 1 - Collector (Keep Running)
+cd ~/ebpf-microseg/collector
+sudo go run main.go
+
+ould show: 🚀 Collector started on :8080
+
+
+Terminal 2 - Agent (Keep Running)
+cd ~/ebpf-microseg/agent
+sudo go run m.go --mode observe
+✅ Should show: ✅ Network Monitor started
+
+sudo go run main.go
+
+Terminal 4 - UI Dashboard
+cd ~/ebpf-microseg/ui
+source venv/bin/activate
+streamlit run app.py
+
+http://localhost:8501
+
+
+
+
+
+vulnarable PHP upload scripts 
+-> attacker uploads shel.php instead of image.jpg
+->visits yousite.some/shell/php
+->now has remote control of your server
+
+
+Open a (TEST)4th terminal and run these commands to see events appear:
+# Install curl for testing
+sudo apt install curl -y
+
+# Test 1: Web request
+curl https://google.com
+
+# Test 2: DNS lookup
+nslookup github.com
+
+# Test 3: Ping
+ping -c 3 8.8.8.8
+
+# Test 4: Check a port
+nc -zv google.com 80
+```
+
+---
+
+## 📊 What You Should See
+
+### In Terminal 2 (Agent):
+```
+🔍 [CONNECT] 192.168.1.100:45678 → 142.250.185.46:443
+🔍 [CONNECT] 192.168.1.100:54321 → 8.8.8.8:53
+
+
