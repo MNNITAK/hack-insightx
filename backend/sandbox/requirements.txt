@@ -1,0 +1,32 @@
+# Virtual Cybersecurity Sandbox Requirements
+# Core container orchestration
+docker==7.0.0
+psutil==5.9.5
+
+# FastAPI and web framework
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.5.0
+
+# Networking and security tools
+python-iptables==1.0.1
+scapy==2.5.0
+requests==2.31.0
+
+# Data processing and storage
+python-json-logger==2.0.7
+python-dateutil==2.8.2
+
+# Background tasks and threading
+celery==5.3.4
+redis==5.0.1
+
+# Security analysis
+pycryptodome==3.19.0
+cryptography==41.0.8
+
+# Development and testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+flake8==6.1.0
