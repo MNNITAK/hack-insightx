@@ -52,7 +52,7 @@ sudo journalctl -u ebpf-collector -f
 cd collector && sudo go run main.go
 
 # Terminal 2
-cd agent && sudo go run main.go
+cd agent && sudo go run m.go
 
 # Terminal 3
 cd ui && source venv/bin/activate && streamlit run app.py
