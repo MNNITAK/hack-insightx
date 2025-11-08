@@ -1,4 +1,4 @@
-# 🚀 InsightX - Cybersecurity Architecture Platform
+# 🚀 InsightX - AI-Powered Cybersecurity Architecture Platform
 
 <div align="center">
 
