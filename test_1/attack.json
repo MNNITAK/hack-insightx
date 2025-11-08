@@ -1,0 +1,279 @@
+
+
+{
+  "metadata": {
+    "attack_id": "attack_001",
+    "attack_name": "SQL Injection + Lateral Movement",
+    "attack_category": "web_application_attack",
+    "severity": "high",
+    "attacker_profile": {
+      "skill_level": "intermediate",
+      "motivation": "financial_gain",
+      "ttps": ["T1190", "T1210", "T1083"]
+    },
+    "duration_seconds": 120
+  },
+  "attack_stages": [
+    {
+      "stage": 1,
+      "name": "Reconnaissance",
+      "timestamp_start": 0,
+      "timestamp_end": 15,
+      "events": [
+        {
+          "event_id": "evt_001",
+          "timestamp": 2,
+          "event_type": "port_scan",
+          "source": {
+            "ip": "185.220.101.34",
+            "location": "Unknown",
+            "reputation": "malicious"
+          },
+          "target": "node_001",
+          "details": {
+            "ports_scanned": [22, 80, 443, 3306, 8080],
+            "scan_rate": "1000 ports/second",
+            "tool_signature": "nmap"
+          },
+          "anomaly_indicators": {
+            "unusual_port_access": true,
+            "high_connection_rate": true,
+            "sequential_port_pattern": true
+          }
+        },
+        {
+          "event_id": "evt_002",
+          "timestamp": 10,
+          "event_type": "service_enumeration",
+          "source": {
+            "ip": "185.220.101.34"
+          },
+          "target": "node_001",
+          "details": {
+            "discovered_services": [
+              {
+                "port": 80,
+                "service": "nginx",
+                "version": "1.18.0"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "stage": 2,
+      "name": "Initial Access",
+      "timestamp_start": 15,
+      "timestamp_end": 45,
+      "events": [
+        {
+          "event_id": "evt_003",
+          "timestamp": 20,
+          "event_type": "sql_injection_attempt",
+          "source": {
+            "ip": "185.220.101.34"
+          },
+          "target": "node_001",
+          "details": {
+            "endpoint": "/api/login",
+            "method": "POST",
+            "payload": "username=admin' OR '1'='1' -- &password=anything",
+            "payload_decoded": {
+              "injection_type": "authentication_bypass",
+              "sql_syntax": "OR '1'='1'",
+              "comment_syntax": "--"
+            },
+            "http_status": 200,
+            "response_time_ms": 150
+          },
+          "anomaly_indicators": {
+            "sql_keywords_present": true,
+            "special_characters": ["'", "--"],
+            "payload_entropy": 0.85,
+            "suspicious_logic_operators": true
+          },
+          "vulnerability_exploited": {
+            "cve": "N/A",
+            "type": "unsanitized_input",
+            "location": "login function",
+            "severity": "critical"
+          }
+        },
+        {
+          "event_id": "evt_004",
+          "timestamp": 22,
+          "event_type": "authentication_success",
+          "source": {
+            "ip": "185.220.101.34"
+          },
+          "target": "node_001",
+          "details": {
+            "username": "admin",
+            "authentication_method": "bypassed",
+            "session_token_issued": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "anomaly_indicators": {
+            "impossible_login": true,
+            "no_password_required": true,
+            "unusual_source_ip": true
+          }
+        }
+      ]
+    },
+    {
+      "stage": 3,
+      "name": "Privilege Escalation",
+      "timestamp_start": 45,
+      "timestamp_end": 70,
+      "events": [
+        {
+          "event_id": "evt_005",
+          "timestamp": 50,
+          "event_type": "command_execution",
+          "source": {
+            "ip": "185.220.101.34"
+          },
+          "target": "node_001",
+          "details": {
+            "command": "cat /etc/passwd",
+            "execution_context": "web_server_process",
+            "output_size_bytes": 2048,
+            "success": true
+          },
+          "anomaly_indicators": {
+            "unexpected_command": true,
+            "file_system_access": true,
+            "privilege_level_mismatch": true
+          }
+        }
+      ]
+    },
+    {
+      "stage": 4,
+      "name": "Lateral Movement",
+      "timestamp_start": 70,
+      "timestamp_end": 95,
+      "events": [
+        {
+          "event_id": "evt_006",
+          "timestamp": 75,
+          "event_type": "internal_port_scan",
+          "source": "node_001",
+          "target": "node_002",
+          "details": {
+            "ports_scanned": [3306, 22],
+            "originating_from": "compromised_web_server"
+          },
+          "anomaly_indicators": {
+            "web_server_scanning_internal": true,
+            "unusual_internal_traffic": true,
+            "lateral_movement_pattern": true
+          }
+        },
+        {
+          "event_id": "evt_007",
+          "timestamp": 80,
+          "event_type": "database_connection_attempt",
+          "source": "node_001",
+          "target": "node_002",
+          "details": {
+            "protocol": "MySQL",
+            "authentication_method": "password",
+            "credentials_used": "root:password123",
+            "success": true
+          },
+          "anomaly_indicators": {
+            "weak_credentials": true,
+            "unauthorized_connection": true,
+            "no_encryption": true
+          },
+          "vulnerability_exploited": {
+            "type": "weak_password",
+            "severity": "critical"
+          }
+        }
+      ]
+    },
+    {
+      "stage": 5,
+      "name": "Data Exfiltration",
+      "timestamp_start": 95,
+      "timestamp_end": 120,
+      "events": [
+        {
+          "event_id": "evt_008",
+          "timestamp": 100,
+          "event_type": "database_query",
+          "source": "node_001",
+          "target": "node_002",
+          "details": {
+            "query": "SELECT * FROM users WHERE 1=1",
+            "rows_returned": 50000,
+            "data_size_mb": 150,
+            "execution_time_ms": 5000
+          },
+          "anomaly_indicators": {
+            "large_data_extraction": true,
+            "select_all_pattern": true,
+            "unusual_query_source": true
+          }
+        },
+        {
+          "event_id": "evt_009",
+          "timestamp": 110,
+          "event_type": "data_upload",
+          "source": "node_001",
+          "target": {
+            "ip": "45.67.89.123",
+            "location": "Unknown",
+            "reputation": "suspicious"
+          },
+          "details": {
+            "protocol": "HTTPS",
+            "data_size_mb": 150,
+            "upload_duration_seconds": 8,
+            "destination_port": 443
+          },
+          "anomaly_indicators": {
+            "large_outbound_transfer": true,
+            "unknown_destination": true,
+            "data_exfiltration_pattern": true
+          }
+        }
+      ]
+    }
+  ],
+  "expected_detections": [
+    {
+      "detection_id": "det_001",
+      "detection_type": "port_scan",
+      "confidence_threshold": 0.95,
+      "expected_detection_time": 3
+    },
+    {
+      "detection_id": "det_002",
+      "detection_type": "sql_injection",
+      "confidence_threshold": 0.98,
+      "expected_detection_time": 20
+    },
+    {
+      "detection_id": "det_003",
+      "detection_type": "lateral_movement",
+      "confidence_threshold": 0.90,
+      "expected_detection_time": 76
+    },
+    {
+      "detection_id": "det_004",
+      "detection_type": "data_exfiltration",
+      "confidence_threshold": 0.92,
+      "expected_detection_time": 111
+    }
+  ],
+  "success_criteria": {
+    "all_stages_detected": true,
+    "detection_latency_max_seconds": 5,
+    "false_positives_max": 0,
+    "attack_fully_blocked": true
+  }
+}

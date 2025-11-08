@@ -1,0 +1,43 @@
+{
+  "assessment_id": "assessment_TechCorp_attack_001",
+  "timestamp": "2025-10-23T10:45:00Z",
+  "security_score": {
+    "overall_score": 6.2,
+    "rating": "Fair",
+    "detection_rate_percent": 95.0,
+    "vulnerability_counts": {
+      "critical": 2,
+      "high": 3,
+      "medium": 1,
+      "total": 6
+    }
+  },
+  "detection_results": {
+    "total_threats_detected": 8,
+    "average_detection_latency_seconds": 2.5
+  },
+  "ai_analysis": {
+    "executive_summary": "Your network demonstrated a 6.2/10 security posture with 2 critical vulnerabilities requiring immediate attention. While our AI successfully detected 95% of attack attempts, the presence of an exposed database and lack of WAF protection create significant risk. We recommend immediate deployment of database access controls and Web Application Firewall to reduce breach probability from 70% to below 20%.",
+    "risk_assessment": {
+      "risk_level": "High",
+      "risk_score": 7.5,
+      "business_impact": {
+        "data_breach_probability": "50-80%",
+        "estimated_cost": "$500K-1M"
+      }
+    }
+  },
+  "defense_recommendations": {
+    "immediate_actions": [
+      {
+        "action": "isolate_database",
+        "description": "Restrict database access to internal network only",
+        "urgency": "immediate",
+        "estimated_time": "30 minutes"
+      }
+    ]
+  }
+}
+
+
+
