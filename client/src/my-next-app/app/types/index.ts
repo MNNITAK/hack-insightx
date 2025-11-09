@@ -40,7 +40,72 @@ export interface CustomNodeData {
 // Custom node type for React Flow - using Node as the base type structure
 export type CustomNode = Node<CustomNodeData>;
 
-// Custom edge data for connections
+// Enhanced connection configuration types (from the Enhanced Connection Modal)
+export interface EnhancedConnectionConfig {
+  // Basic Configuration
+  name: string;
+  description: string;
+  direction: 'inbound' | 'outbound' | 'bidirectional';
+  
+  // Security Configuration
+  encryption: boolean;
+  authentication_required: boolean;
+  authorization_level: 'none' | 'basic' | 'elevated' | 'admin';
+  ssl_tls: boolean;
+  certificate_validation: boolean;
+  
+  // Type-specific configurations
+  database?: {
+    connection_type: 'read' | 'write' | 'read-write';
+    database_name: string;
+    table_access: string;
+    query_type: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE' | 'mixed';
+    connection_pooling: boolean;
+    timeout_seconds: number;
+    max_connections: number;
+  };
+  
+  api?: {
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+    endpoint: string;
+    authentication_type: 'none' | 'basic' | 'bearer' | 'oauth' | 'api-key';
+    rate_limiting: boolean;
+    rate_limit_requests: number;
+    rate_limit_window: string;
+    response_format: 'json' | 'xml' | 'plain' | 'binary';
+    timeout_seconds: number;
+  };
+  
+  file_transfer?: {
+    protocol: 'FTP' | 'SFTP' | 'SCP' | 'HTTP' | 'HTTPS';
+    file_types: string;
+    max_file_size_mb: number;
+    compression: boolean;
+    virus_scanning: boolean;
+    access_control: boolean;
+    audit_logging: boolean;
+  };
+  
+  authentication?: {
+    auth_method: 'password' | 'mfa' | 'sso' | 'certificate' | 'biometric';
+    session_management: boolean;
+    session_timeout_minutes: number;
+    password_policy: boolean;
+    account_lockout: boolean;
+    audit_logging: boolean;
+  };
+  
+  // Attack vectors
+  attack_vectors: {
+    sql_injection: boolean;
+    idor: boolean;
+    path_traversal: boolean;
+    xss: boolean;
+    privilege_escalation: boolean;
+  };
+}
+
+// Custom edge data for connections (enhanced)
 export interface CustomEdgeData {
   id: string;
   type: string;
@@ -48,6 +113,8 @@ export interface CustomEdgeData {
   protocol?: string;
   encrypted?: boolean;
   bandwidth?: string;
+  // Enhanced configuration
+  enhanced_config?: EnhancedConnectionConfig;
 }
 
 // Custom edge type for React Flow - using Edge as the base type structure
@@ -100,6 +167,8 @@ export interface ArchitectureConnection {
   target: string;
   type: string;
   properties?: Record<string, any>;
+  // Enhanced configuration for detailed connection analysis
+  enhanced_config?: EnhancedConnectionConfig;
 }
 
 // Drag and drop types

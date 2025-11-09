@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 class DeterministicSecurityScanner:

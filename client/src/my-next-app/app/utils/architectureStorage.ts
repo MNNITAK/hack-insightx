@@ -68,13 +68,15 @@ export class ArchitectureStorage {
       }
     }));
 
-    // Convert edges
+    // Convert edges with enhanced configurations
     const architectureConnections = edges.map(edge => ({
       id: edge.id,
       source: edge.source,
       target: edge.target,
       type: edge.data?.type || 'network',
-      properties: edge.data?.properties || {}
+      properties: edge.data?.properties || {},
+      // Include enhanced configuration if available
+      enhanced_config: edge.data?.enhanced_config || undefined
     }));
 
     // Create default network zones
@@ -139,7 +141,7 @@ export class ArchitectureStorage {
       }
     }));
 
-    // Convert edges
+    // Convert edges with enhanced configurations
     const edges: CustomEdge[] = architecture.connections.map(connection => ({
       id: connection.id,
       source: connection.source,
@@ -148,7 +150,9 @@ export class ArchitectureStorage {
       data: {
         id: connection.id,
         type: connection.type,
-        properties: connection.properties
+        properties: connection.properties,
+        // Include enhanced configuration if available
+        enhanced_config: connection.enhanced_config
       }
     }));
 
