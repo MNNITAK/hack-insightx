@@ -11,4 +11,6 @@ def generate_suggestions(similar_cases):
         if "unpatched" in case["summary"].lower():
             suggestions.append("Patch vulnerable systems regularly.")
     
+    
+    
     return list(set(suggestions))  # remove duplicates
