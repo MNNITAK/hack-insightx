@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - VulnShop</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .admin-panel { background: white; padding: 20px; border-radius: 8px; }
+        .header { background: #dc3545; color: white; padding: 15px; margin: -20px -20px 20px -20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="admin-panel">
+        <div class="header">
+            <h1>🔧 Admin Dashboard</h1>
+            <p>Vulnerable Administration Panel</p>
+        </div>
+
+        <div class="section">
+            <h3>👥 User Management</h3>
+            <p><a href="users.php">View All Users</a></p>
+            <p><a href="add-user.php">Add New User</a></p>
+            <p><a href="delete-user.php">Delete User</a></p>
+        </div>
+
+        <div class="section">
+            <h3>🗄️ Database Operations</h3>
+            <p><a href="backup.php">Download Database Backup</a></p>
+            <p><a href="restore.php">Restore Database</a></p>
+            <p><a href="execute-sql.php">Execute SQL Query</a></p>
+        </div>
+
+        <div class="section">
+            <h3>📁 File Management</h3>
+            <p><a href="file-manager.php">Browse Files</a></p>
+            <p><a href="upload-manager.php">Uploaded Files</a></p>
+            <p><a href="logs.php">View Log Files</a></p>
+        </div>
+
+        <div class="section">
+            <h3>⚙️ System Configuration</h3>
+            <p><a href="config.php">Server Configuration</a></p>
+            <p><a href="phpinfo.php">PHP Information</a></p>
+            <p><a href="env.php">Environment Variables</a></p>
+        </div>
+
+        <div class="section" style="background: #fff3cd;">
+            <h3>⚠️ Vulnerabilities Present</h3>
+            <ul>
+                <li>No authentication required</li>
+                <li>Directory listing enabled</li>
+                <li>Direct database access</li>
+                <li>Unrestricted file access</li>
+                <li>System information disclosure</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
