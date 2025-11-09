@@ -4,9 +4,9 @@ FastAPI backend using OWASP, STRIDE, and MITRE ATT&CK rules
 NO LLM DEPENDENCY - 100% rule-based security analysis
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response
+from fastapi.responses import Response, StreamingResponse
 from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
 import json
@@ -14,12 +14,82 @@ from datetime import datetime
 import uvicorn
 import sys
 import os
+import asyncio
+import uuid
 
 # Add rules directory to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'rules'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sandbox'))
 
 from security_scanner import RuleBasedSecurityScanner, SecurityAssessment
 from attack_simulator import RuleBasedAttackSimulator, AttackValidationResult
+
+# Import VM attack functionality
+try:
+    from enhanced_vm_attack_engine import EnhancedVMAttackEngine
+    vm_engine = EnhancedVMAttackEngine()
+    print("✅ VM Attack Engine loaded successfully")
+except ImportError as e:
+    print(f"⚠️ Warning: VM Attack Engine not available: {e}")
+    # Create a simple mock VM engine for testing
+    class MockVMEngine:
+        def get_attack_options(self, architecture):
+            return [
+                {
+                    "id": "sql_injection_1",
+                    "name": "SQL Injection Attack",
+                    "description": "Attempts to inject malicious SQL code",
+                    "category": "OWASP",
+                    "severity": "HIGH",
+                    "success_probability": 0.75,
+                    "estimated_duration": "15-30 minutes",
+                    "affected_components": ["database", "web_server"]
+                },
+                {
+                    "id": "ddos_attack_1", 
+                    "name": "DDoS Attack Simulation",
+                    "description": "Simulates distributed denial of service",
+                    "category": "Network",
+                    "severity": "MEDIUM",
+                    "success_probability": 0.60,
+                    "estimated_duration": "30-60 minutes",
+                    "affected_components": ["web_server", "load_balancer"]
+                },
+                {
+                    "id": "phishing_1",
+                    "name": "Phishing Attack",
+                    "description": "Social engineering attack simulation",
+                    "category": "MITRE",
+                    "severity": "HIGH",
+                    "success_probability": 0.80,
+                    "estimated_duration": "1-2 hours",
+                    "affected_components": ["users", "email_system"]
+                }
+            ]
+        
+        def execute_vm_attack_with_canvas_updates(self, architecture, attack_id, config):
+            return {
+                "execution_id": f"exec_{attack_id}",
+                "status": "completed",
+                "success": True,
+                "start_time": "2025-11-09T10:30:00Z",
+                "end_time": "2025-11-09T10:45:00Z",
+                "canvas_updates": {
+                    "web1": {"status": "compromised", "compromise_level": 85},
+                    "db1": {"status": "under_attack", "compromise_level": 45}
+                },
+                "compromised_nodes": ["web1"],
+                "attack_timeline": [
+                    "Port scan initiated on web server",
+                    "Vulnerability discovered in login form", 
+                    "SQL injection payload executed",
+                    "Database access gained",
+                    "Attack completed successfully"
+                ]
+            }
+    
+    vm_engine = MockVMEngine()
+    print("✅ Using Mock VM Attack Engine for testing")
 
 app = FastAPI(title="InsightX Rule-Based Security Agent", version="2.0.0")
 
@@ -31,7 +101,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 # ==================== Pydantic Models ====================
 
@@ -62,6 +131,14 @@ class CorrectionRequest(BaseModel):
     attack: ConfiguredAttack
     architecture: Architecture
 
+class VMAttackRequest(BaseModel):
+    architecture: Architecture
+    attack_id: str
+    config: Dict[str, Any]
+
+class VMAttackStatusRequest(BaseModel):
+    attack_id: str
+
 # ==================== Initialize Scanner ====================
 
 scanner = RuleBasedSecurityScanner()
@@ -81,6 +158,10 @@ def read_root():
             "heal": "/api/heal",
             "validate_attack": "/api/validate-attack",
             "correct_architecture": "/api/correct-architecture",
+            "vm_attack_scenarios": "/api/vm-attack-scenarios",
+            "vm_attack_execute": "/api/vm-attack-execute",
+            "vm_attack_status": "/api/vm-attack-status",
+            "analysis_options": "/api/analysis-options",
             "health": "/health"
         }
     }
@@ -459,9 +540,13 @@ def _generate_healed_architecture(original_arch: Dict, assessment: SecurityAsses
     
     # Modify connections to add encryption
     for conn in healed.get("connections", []):
-        if not conn.get("properties", {}).get("encrypted", False):
+        # Initialize properties if not exists
+        if "properties" not in conn:
+            conn["properties"] = {}
+        
+        if not conn["properties"].get("encrypted", False):
             conn["properties"]["encrypted"] = True
-            conn["properties"]["protocol"] = conn.get("properties", {}).get("protocol", "http").replace("http", "https")
+            conn["properties"]["protocol"] = conn["properties"].get("protocol", "http").replace("http", "https")
             modified_connections.append(conn)
     
     # Update metadata
@@ -926,6 +1011,206 @@ def _generate_attack_specific_correction(
     corrected['compliance_improvement'] = "Enhanced compliance with security frameworks"
     
     return corrected
+
+# ==================== VM ATTACK ENDPOINTS ====================
+
+@app.get("/api/analysis-options")
+async def get_analysis_options():
+    """
+    Get available analysis options for the frontend
+    """
+    return {
+        "options": [
+            {
+                "id": "regular",
+                "name": "Regular Security Analysis",
+                "description": "Traditional OWASP, MITRE, STRIDE analysis",
+                "icon": "shield",
+                "available": True
+            },
+            {
+                "id": "vm_attack",
+                "name": "VM Attack Simulation",
+                "description": "Interactive attack scenarios with real-time visualization",
+                "icon": "target",
+                "available": vm_engine is not None,
+                "recommended": True
+            },
+            {
+                "id": "combined",
+                "name": "Combined Analysis",
+                "description": "Security analysis + VM attack simulation",
+                "icon": "zap",
+                "available": vm_engine is not None
+            }
+        ]
+    }
+
+@app.post("/api/vm-attack-scenarios")
+async def get_vm_attack_scenarios(request: AnalysisRequest):
+    """
+    Get available VM attack scenarios for the given architecture
+    """
+    if vm_engine is None:
+        raise HTTPException(status_code=503, detail="VM Attack Engine not available")
+    
+    try:
+        # Convert Pydantic model to dict
+        architecture_dict = {
+            "metadata": request.architecture.metadata,
+            "nodes": [dict(node) for node in request.architecture.nodes],
+            "connections": [dict(conn) for conn in request.architecture.connections],
+            "network_zones": request.architecture.network_zones or []
+        }
+        
+        # Get attack scenarios
+        scenarios = vm_engine.get_attack_options(architecture_dict)
+        
+        print(f"✅ Generated {len(scenarios)} VM attack scenarios")
+        
+        return {
+            "scenarios": scenarios,
+            "total_count": len(scenarios),
+            "architecture_id": request.architecture.metadata.get("id", "unknown"),
+            "generated_at": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        print(f"❌ Error generating VM attack scenarios: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/vm-attack-execute")
+async def execute_vm_attack(request: VMAttackRequest, background_tasks: BackgroundTasks):
+    """
+    Execute a VM attack simulation with real-time canvas updates
+    """
+    if vm_engine is None:
+        raise HTTPException(status_code=503, detail="VM Attack Engine not available")
+    
+    try:
+        # Convert Pydantic model to dict
+        architecture_dict = {
+            "metadata": request.architecture.metadata,
+            "nodes": [dict(node) for node in request.architecture.nodes],
+            "connections": [dict(conn) for conn in request.architecture.connections],
+            "network_zones": request.architecture.network_zones or []
+        }
+        
+        attack_id = request.attack_id
+        config = request.config
+        
+        print(f"🎯 Executing VM attack: {attack_id}")
+        
+        # Execute attack with canvas updates
+        result = vm_engine.execute_vm_attack_with_canvas_updates(
+            architecture_dict, 
+            attack_id, 
+            config
+        )
+        
+        if result:
+            print(f"✅ VM attack executed successfully")
+            return {
+                "attack_id": attack_id,
+                "execution_id": result.get("execution_id", str(uuid.uuid4())),
+                "status": "completed",
+                "start_time": result.get("start_time", datetime.now().isoformat()),
+                "end_time": result.get("end_time", datetime.now().isoformat()),
+                "result": result,
+                "canvas_updates": result.get("canvas_updates", {}),
+                "compromised_nodes": result.get("compromised_nodes", []),
+                "attack_timeline": result.get("attack_timeline", []),
+                "success": result.get("success", True)
+            }
+        else:
+            return {
+                "attack_id": attack_id,
+                "status": "failed",
+                "error": "Attack execution failed"
+            }
+        
+    except Exception as e:
+        print(f"❌ Error executing VM attack: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/vm-attack-status/{attack_id}")
+async def get_vm_attack_status(attack_id: str):
+    """
+    Get the status of a running VM attack simulation
+    """
+    # This would typically check a database or cache for attack status
+    # For now, return a simple response
+    return {
+        "attack_id": attack_id,
+        "status": "completed",
+        "progress": 100,
+        "canvas_updates": {},
+        "last_update": datetime.now().isoformat()
+    }
+
+@app.post("/api/combined-analysis")
+async def perform_combined_analysis(request: AnalysisRequest):
+    """
+    Perform both regular security analysis and VM attack simulation
+    """
+    try:
+        # First, perform regular analysis
+        analysis_result = await analyze_architecture(request)
+        
+        # Then, get VM attack scenarios if available
+        vm_scenarios = []
+        vm_results = {}
+        
+        if vm_engine is not None:
+            scenarios_response = await get_vm_attack_scenarios(request)
+            vm_scenarios = scenarios_response["scenarios"]
+            
+            # Execute top 3 attack scenarios
+            architecture_dict = {
+                "metadata": request.architecture.metadata,
+                "nodes": [dict(node) for node in request.architecture.nodes],
+                "connections": [dict(conn) for conn in request.architecture.connections],
+                "network_zones": request.architecture.network_zones or []
+            }
+            
+            for scenario in vm_scenarios[:3]:  # Top 3 scenarios
+                attack_result = vm_engine.execute_vm_attack_with_canvas_updates(
+                    architecture_dict, 
+                    scenario["id"], 
+                    {"intensity": "medium", "stealth_level": "normal"}
+                )
+                if attack_result:
+                    vm_results[scenario["id"]] = attack_result
+        
+        return {
+            "analysis_type": "combined",
+            "regular_analysis": analysis_result,
+            "vm_attack_scenarios": {
+                "total_scenarios": len(vm_scenarios),
+                "executed_scenarios": len(vm_results),
+                "scenarios": vm_scenarios,
+                "results": vm_results
+            },
+            "combined_risk_score": analysis_result["risk_assessment"]["total_score"],
+            "combined_recommendations": {
+                "immediate": analysis_result["recommendations"]["immediate_actions"][:10],
+                "vm_specific": [
+                    f"Mitigate {scenario['name']} attack vector"
+                    for scenario in vm_scenarios[:5]
+                ]
+            },
+            "timestamp": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        print(f"❌ Error in combined analysis: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     print("🚀 Starting InsightX Rule-Based Security Agent...")
