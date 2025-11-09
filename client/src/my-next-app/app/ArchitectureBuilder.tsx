@@ -17,6 +17,7 @@ import { AISuggestionModal } from './components/ai-suggestion/AISuggestionModal'
 import { TemplateGalleryModal } from './components/templates/TemplateGalleryModal';
 import { SecurityDashboard } from './components/SecurityDashboard';
 import DatabaseTestPanel from './components/DatabaseTestPanel';
+import EnhancedConnectionModal from './components/flow/EnhancedConnectionModal';
 import { ArchitectureTemplate } from './utils/architectureTemplates';
 import { Button } from './components/ui/button';
 import { CustomNodeData, CustomEdgeData, Architecture, ArchitectureMetadata } from './types';
@@ -26,6 +27,7 @@ import { attackStorage } from './utils/attackStorage';
 import { agentService } from './utils/agentService';
 import { getComponentByType } from './utils/componentRegistry';
 import VirtualSandboxModal from './components/virtual-sandbox/VirtualSandboxModal';
+import CaseStudyAnalysisModal from './components/case-study/CaseStudyAnalysisModal';
 
 
 /**
@@ -43,6 +45,7 @@ interface ToolbarProps {
   onVersionHistory: () => void;
   onSecurityDashboard: () => void;
   onVirtualSandbox: () => void;
+  onCaseStudyAnalysis: () => void;
   hasNodes: boolean;
   architectureName: string;
   onArchitectureNameChange: (name: string) => void;
@@ -60,6 +63,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onVersionHistory,
   onSecurityDashboard,
   onVirtualSandbox,
+  onCaseStudyAnalysis,
   hasNodes,
   architectureName,
   onArchitectureNameChange
@@ -164,6 +168,15 @@ const Toolbar: React.FC<ToolbarProps> = ({
           className="border-purple-600 bg-purple-600/10 text-purple-400 hover:bg-purple-600 hover:text-white disabled:opacity-50"
         >
           🚀 Virtual Sandbox
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onCaseStudyAnalysis}
+          disabled={!hasNodes}
+          className="border-orange-600 bg-orange-600/10 text-orange-400 hover:bg-orange-600 hover:text-white disabled:opacity-50"
+        >
+          📊 Case Studies
         </Button>
         <div className="h-6 w-px bg-gray-600 mx-2"></div>
         <Button
@@ -727,6 +740,13 @@ export default function ArchitectureBuilder() {
   // Virtual Sandbox modal state
   const [isVirtualSandboxOpen, setIsVirtualSandboxOpen] = useState(false);
   
+  // Case Study Analysis modal state
+  const [isCaseStudyAnalysisOpen, setIsCaseStudyAnalysisOpen] = useState(false);
+  
+  // Enhanced Connection Modal state
+  const [isEnhancedConnectionModalOpen, setIsEnhancedConnectionModalOpen] = useState(false);
+  const [selectedConnectionEdge, setSelectedConnectionEdge] = useState<Edge<CustomEdgeData> | null>(null);
+  
   // Track current work vs loaded architecture
   const [currentWork, setCurrentWork] = useState<{nodes: Node<CustomNodeData>[], edges: Edge<CustomEdgeData>[]} | null>(null);
   const [isShowingLoadedArchitecture, setIsShowingLoadedArchitecture] = useState(false);
@@ -1181,6 +1201,32 @@ export default function ArchitectureBuilder() {
     }
   }, []);
 
+  // Custom edge selection handler to open Enhanced Connection Modal
+  const handleEdgeSelect = useCallback((edge: Edge<CustomEdgeData> | null) => {
+    if (edge) {
+      setSelectedConnectionEdge(edge);
+      setIsEnhancedConnectionModalOpen(true);
+    }
+    setSelectedEdge(edge);
+  }, []);
+
+  // Handle Enhanced Connection Configuration Save
+  const handleEnhancedConnectionSave = useCallback((config: any) => {
+    if (selectedConnectionEdge) {
+      // Update the edge with enhanced configuration
+      setEdges(edges => 
+        edges.map(edge => 
+          edge.id === selectedConnectionEdge.id 
+            ? { ...edge, data: { ...edge.data, enhanced_config: config } }
+            : edge
+        )
+      );
+      
+      // Mark as configured
+      console.log('Enhanced Connection Configuration Saved:', config);
+    }
+  }, [selectedConnectionEdge]);
+
   return (
     <div className="h-screen flex flex-col" style={{
       background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)'
@@ -1198,6 +1244,7 @@ export default function ArchitectureBuilder() {
         onVersionHistory={() => setIsVersioningModalOpen(true)}
         onSecurityDashboard={() => setIsSecurityDashboardOpen(true)}
         onVirtualSandbox={() => setIsVirtualSandboxOpen(true)}
+        onCaseStudyAnalysis={() => setIsCaseStudyAnalysisOpen(true)}
         hasNodes={nodes.length > 0}
         architectureName={architectureName}
         onArchitectureNameChange={setArchitectureName}
@@ -1215,7 +1262,7 @@ export default function ArchitectureBuilder() {
             nodes={nodes}
             edges={edges}
             onNodeSelect={setSelectedNode}
-            onEdgeSelect={setSelectedEdge}
+            onEdgeSelect={handleEdgeSelect}
             onArchitectureChange={handleArchitectureChange}
             updateNodeRef={updateNodeRef}
             updateEdgeRef={updateEdgeRef}
@@ -1470,6 +1517,26 @@ export default function ArchitectureBuilder() {
           })),
           network_zones: []
         }}
+      />
+
+      {/* Case Study Analysis Modal */}
+      <CaseStudyAnalysisModal
+        isOpen={isCaseStudyAnalysisOpen}
+        onClose={() => setIsCaseStudyAnalysisOpen(false)}
+        nodes={nodes}
+        edges={edges}
+        architectureName={architectureName}
+      />
+
+      {/* Enhanced Connection Configuration Modal */}
+      <EnhancedConnectionModal
+        isOpen={isEnhancedConnectionModalOpen}
+        onClose={() => {
+          setIsEnhancedConnectionModalOpen(false);
+          setSelectedConnectionEdge(null);
+        }}
+        onSave={handleEnhancedConnectionSave}
+        connection={selectedConnectionEdge}
       />
 
       {/* Database Test Panel - Development Only */}
