@@ -24,9 +24,11 @@ import { CustomNodeData, CustomEdgeData, Architecture, ArchitectureMetadata } fr
 import { ConfiguredAttack, SuggestedArchitecture } from './types/attack';
 import { useArchitectureStorage } from './utils/architectureStorage';
 import { attackStorage } from './utils/attackStorage';
+// VM Attack Integration - Simple VM attack modal (no Docker sandbox)
+import VMAttackModal from './components/VMAttackModal';
 import { agentService } from './utils/agentService';
 import { getComponentByType } from './utils/componentRegistry';
-import VirtualSandboxModal from './components/virtual-sandbox/VirtualSandboxModal';
+// Removed complex VirtualSandboxModal - using simple VMAttackModal instead
 import CaseStudyAnalysisModal from './components/case-study/CaseStudyAnalysisModal';
 
 
@@ -150,6 +152,15 @@ const Toolbar: React.FC<ToolbarProps> = ({
           className="border-red-600 bg-red-600/10 text-red-400 hover:bg-red-600 hover:text-white"
         >
           ⚡ Cyber Attacks
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onVirtualSandbox}
+          disabled={!hasNodes}
+          className="border-orange-600 bg-orange-600/10 text-orange-400 hover:bg-orange-600 hover:text-white disabled:opacity-50"
+        >
+          🎯 VM Attack Sim
         </Button>
         <Button
           variant="outline"
@@ -1489,8 +1500,8 @@ export default function ArchitectureBuilder() {
         />
       )}
 
-      {/* Virtual Cybersecurity Sandbox Modal */}
-      <VirtualSandboxModal
+      {/* Simple VM Attack Modal - No Docker complexity */}
+      <VMAttackModal
         isOpen={isVirtualSandboxOpen}
         onClose={() => setIsVirtualSandboxOpen(false)}
         architecture={{
@@ -1498,7 +1509,7 @@ export default function ArchitectureBuilder() {
             company_name: architectureName || 'Current Architecture',
             architecture_type: 'web_application',
             security_level: 'medium',
-            description: 'Current architecture for sandbox testing'
+            description: 'Current architecture for VM attack simulation'
           },
           nodes: nodes.map(node => ({
             id: node.id,

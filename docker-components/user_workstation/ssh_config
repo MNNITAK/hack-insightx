@@ -1,0 +1,28 @@
+# SSH Configuration for Vulnerable Testing
+Port 22
+Protocol 2
+
+# Vulnerable: Allow password authentication
+PasswordAuthentication yes
+PermitEmptyPasswords yes
+PermitRootLogin yes
+
+# Vulnerable: Weak key exchange
+KexAlgorithms diffie-hellman-group1-sha1,diffie-hellman-group14-sha1
+
+# Vulnerable: Weak ciphers
+Ciphers aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
+
+# Vulnerable: Weak MACs
+MACs hmac-md5,hmac-sha1
+
+# Allow multiple authentication attempts
+MaxAuthTries 10
+
+# Logging
+SyslogFacility AUTH
+LogLevel INFO
+
+# Allow TCP forwarding
+AllowTcpForwarding yes
+GatewayPorts yes
