@@ -8,6 +8,9 @@
 
 **🔐 Build. Test. Break. Secure. Repeat.**
 
+Team Name : INSIGHT-X
+Members : Akshay Yadav, Abhishek Pandey, Anushka Gupta, Madhav Gabba
+
 *Revolutionary cybersecurity platform that transforms how organizations design, validate, and secure their IT infrastructure through AI-powered analysis and live attack simulation.*
 
 [🎯 Quick Start](#-getting-started) • [📖 Documentation](#-documentation) • [🌟 Features](#-key-features) • [💡 Use Cases](#-use-cases--applications)
