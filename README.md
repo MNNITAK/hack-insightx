@@ -12,6 +12,9 @@ sudo ./setup.sh
 
 **Dashboard:** http://localhost:8501
 
+
+**Demo Video:** https://youtu.be/O0-yEVonWkw?si=QWonGUwVKsWu0fi2
+
 ## 🎯 Features
 
 - ✅ Real process names, PIDs, and exe paths
